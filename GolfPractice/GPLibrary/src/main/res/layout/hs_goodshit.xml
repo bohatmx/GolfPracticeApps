@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/goodShitMain"
+    android:layout_margin="@dimen/mon_margin"
+    app:cardElevation="@dimen/mon_divider">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/mon_margin">
+
+        <RelativeLayout
+            android:id="@+id/titleLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/icon1"
+                android:src="@drawable/golfball48"
+                android:layout_width="24dp"
+                android:layout_height="24dp" />
+        <TextView
+            android:id="@+id/mistakeLabel"
+            style="@style/Title2TextStyleGrey"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/icon1"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Good Shit" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/fairway"
+            android:layout_marginTop="@dimen/mon_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/titleLayout">
+
+            <CheckBox
+                android:id="@+id/chkFairwayHit"
+                style="@style/TextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="Fairway Hit" />
+
+            <TextView
+                android:id="@+id/clubTeeShot"
+                android:text="Club Used"
+                style="@style/TextStyleBoldSmall"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/greenInReg"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/fairway">
+
+            <CheckBox
+                android:id="@+id/chkGreenInReg"
+                style="@style/TextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="Green in Reg." />
+
+            <TextView
+                android:id="@+id/clubGreenInReg"
+                android:text="Club Used"
+                style="@style/TextStyleBoldSmall"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/distanceToGreenLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:layout_below="@id/greenInReg">
+            <TextView
+                android:id="@+id/distanceToPin"
+                style="@style/Title1TextStyleGreen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_alignParentRight="true" />
+            <TextView
+                android:id="@+id/distLabel"
+                style="@style/TextStyleSmall"
+                android:layout_toLeftOf="@id/distanceToPin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="Distance to Pin" />
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

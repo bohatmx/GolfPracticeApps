@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/counterCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/mon_wide"
+    app:cardElevation="@dimen/mon_divider">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/mon_margin">
+
+            <TextView
+                android:id="@+id/holeLabel"
+                style="@style/Title1TextStyleGrey"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/mon_margin"
+                android:text="Hole #"
+                android:textSize="26dp" />
+
+            <RelativeLayout
+                android:id="@+id/prevLayout"
+                android:padding="@dimen/mon_margin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/holeLabel">
+
+                <ImageView
+                    android:id="@+id/iconPrev"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_centerInParent="true"
+                    android:src="@android:drawable/ic_media_previous"
+                    android:tint="@color/black" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/holeNumber"
+                style="@style/Title1TextStyleRed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_marginRight="@dimen/mon_margin"
+                android:layout_toRightOf="@id/prevLayout"
+                android:text="1"
+                android:textSize="48sp" />
+
+            <RelativeLayout
+                android:id="@+id/nextLayout"
+                android:padding="@dimen/mon_margin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/holeNumber">
+
+                <ImageView
+                    android:id="@+id/iconNext"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/mon_margin"
+
+                    android:src="@android:drawable/ic_media_next"
+                    android:tint="@color/black" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

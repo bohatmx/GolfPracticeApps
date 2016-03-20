@@ -17,6 +17,7 @@ public class PracticeSessionDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private Integer practiceSessionID;
+    private String golfCourseName;
     private Long sessionDate;
     private Integer numberOfHoles;
     private Integer totalStrokes;
@@ -26,13 +27,38 @@ public class PracticeSessionDTO implements Serializable {
     private List<HoleStatDTO> holeStatList;
     private List<VideoUploadDTO> videoUploadList;
     private Integer playerID;
-    private Integer golfCourseID;
+    private Integer golfCourseID, totalMistakes;
+    private GolfCourseDTO golfCourse;
 
     public PracticeSessionDTO() {
     }
 
     public PracticeSessionDTO(Integer practiceSessionID) {
         this.practiceSessionID = practiceSessionID;
+    }
+
+    public Integer getTotalMistakes() {
+        return totalMistakes;
+    }
+
+    public void setTotalMistakes(Integer totalMistakes) {
+        this.totalMistakes = totalMistakes;
+    }
+
+    public GolfCourseDTO getGolfCourse() {
+        return golfCourse;
+    }
+
+    public void setGolfCourse(GolfCourseDTO golfCourse) {
+        this.golfCourse = golfCourse;
+    }
+
+    public String getGolfCourseName() {
+        return golfCourseName;
+    }
+
+    public void setGolfCourseName(String golfCourseName) {
+        this.golfCourseName = golfCourseName;
     }
 
     public Integer getPlayerID() {
@@ -68,6 +94,9 @@ public class PracticeSessionDTO implements Serializable {
     }
 
     public Integer getNumberOfHoles() {
+        if (numberOfHoles == null) {
+            numberOfHoles = 0;
+        }
         return numberOfHoles;
     }
 
@@ -76,6 +105,9 @@ public class PracticeSessionDTO implements Serializable {
     }
 
     public Integer getTotalStrokes() {
+        if (totalStrokes == null) {
+            totalStrokes = 0;
+        }
         return totalStrokes;
     }
 
@@ -84,6 +116,9 @@ public class PracticeSessionDTO implements Serializable {
     }
 
     public Integer getUnderPar() {
+        if (underPar == null) {
+            underPar = 0;
+        }
         return underPar;
     }
 
@@ -92,6 +127,9 @@ public class PracticeSessionDTO implements Serializable {
     }
 
     public Integer getOverPar() {
+        if (overPar == null) {
+            overPar = 0;
+        }
         return overPar;
     }
 
@@ -100,6 +138,9 @@ public class PracticeSessionDTO implements Serializable {
     }
 
     public Boolean getPar() {
+        if (par == null) {
+            par = Boolean.FALSE;
+        }
         return par;
     }
 

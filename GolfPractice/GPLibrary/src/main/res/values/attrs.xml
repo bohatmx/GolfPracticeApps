@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="HoleCounter">
+        <attr name="numberColor" format="color"/>
+        <attr name="numberTextSize" format="integer"/>
+        <attr name="iconSize" format="integer"/>
+    </declare-styleable>
+</resources>

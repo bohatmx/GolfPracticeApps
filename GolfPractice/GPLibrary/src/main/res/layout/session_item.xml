@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/mon_margin"
+    app:cardCornerRadius="@dimen/mon_divider"
+    app:cardElevation="@dimen/mon_padding">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/mon_margin"
+        android:layout_marginBottom="@dimen/mon_wide"
+        android:layout_marginTop="@dimen/mon_margin">
+
+        <TextView
+            android:id="@+id/number"
+            style="@style/BlackCircleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0" />
+
+        <RelativeLayout
+            android:id="@+id/nameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/number">
+
+            <TextView
+                android:id="@+id/golfCourse"
+                style="@style/Title2TextStyleBlack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:text="GolfCourse Name Here" />
+
+            <TextView
+                android:id="@+id/date"
+                style="@style/TextStyleBold"
+                android:textColor="@color/blue_400"
+                android:layout_marginTop="@dimen/mon_padding"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/golfCourse"
+                android:text="wednesday, 30 December 2056 12:35" />
+        </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/detailLayout"
+        android:layout_below="@id/nameLayout"
+        android:layout_marginTop="@dimen/mon_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/number">
+
+        <RelativeLayout
+            android:id="@+id/holeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/holeCount"
+                style="@style/GreenCircleSmall"
+                android:text="0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/holeCountLabel"
+                style="@style/TextStyleSmall"
+                android:text="Number of Holes"
+                android:layout_toRightOf="@id/holeCount"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/strokeLayout"
+            android:layout_below="@id/holeLayout"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/strokes"
+                style="@style/GreyCircleSmall"
+                android:text="0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/strokesLabel"
+                style="@style/TextStyleSmall"
+                android:text="Number of Strokes"
+                android:layout_toRightOf="@id/strokes"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/underParLayout"
+            android:layout_below="@id/strokeLayout"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/underPar"
+                style="@style/RedCircleSmall"
+                android:text="0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/underLabel"
+                style="@style/TextStyleSmall"
+                android:text="Number of Strokes Under Par"
+                android:layout_toRightOf="@id/underPar"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/parLayout"
+            android:layout_below="@id/underParLayout"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/par"
+                style="@style/BlackCircleSmall"
+                android:text="E"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/parLabel"
+                style="@style/TextStyleSmall"
+                android:text="Even Par"
+                android:layout_toRightOf="@id/par"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/overparLayout"
+            android:layout_below="@id/parLayout"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/overpar"
+                style="@style/BlueCircleSmall"
+                android:text="E"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/overparLabel"
+                style="@style/TextStyleSmall"
+                android:text="Over Par"
+                android:layout_toRightOf="@id/overpar"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/mistakesLayout"
+            android:layout_below="@id/overparLayout"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/mistakes"
+                style="@style/OrangeCircleSmall"
+                android:text="E"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/mistakeLabel"
+                style="@style/TextStyleSmall"
+                android:text="Number of Mistakes"
+                android:layout_toRightOf="@id/mistakes"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

@@ -6,26 +6,32 @@
 package com.boha.golfpractice.library.dto;
 
 /**
- *
  * @author aubreymalabie
  */
 public class RequestDTO {
+    public RequestDTO(int requestType) {
+        this.requestType = requestType;
+    }
+
     //call identifiers
-    public static final int 
+    public static final int
             REGISTER_PLAYER = 1,
             REGISTER_COACH = 2,
             SIGN_IN_PLAYER = 3,
             SIGN_IN_COACH = 4,
-            
-            ADD_GOLF_COURSE = 11,
+
+    ADD_GOLF_COURSE = 11,
             ADD_HOLE = 12,
             ADD_PRACTICE_SESSION = 14,
             ADD_HOLE_STAT = 15,
-                   
-            GET_PLAYER_DATA = 21,
+
+    GET_PLAYER_DATA = 21,
             GET_COACH_DATA = 22,
-            GET_GOLF_COURSES_BY_LOCATION = 23;
-    
+            GET_GOLF_COURSES_BY_LOCATION = 23,
+            GET_ALL_GOLF_COURSES = 24,
+            UPDATE_PRACTICE_SESSION = 25,
+            GET_ALL_COACHES = 26;
+
     private int requestType;
     private Integer playerID,
             coachID,
@@ -33,7 +39,7 @@ public class RequestDTO {
             practiceSessionID,
             clubUsedID,
             holeID, holeStatID, videoUploadID;
-    private Double latitude,longitude;
+    private Double latitude, longitude;
     private Integer radius;
     private String email, password;
     private PlayerDTO player;
@@ -76,7 +82,7 @@ public class RequestDTO {
     public void setZipResponse(boolean zipResponse) {
         this.zipResponse = zipResponse;
     }
-    
+
     public int getRequestType() {
         return requestType;
     }
@@ -213,5 +219,5 @@ public class RequestDTO {
         this.hole = hole;
     }
 
-    
+
 }

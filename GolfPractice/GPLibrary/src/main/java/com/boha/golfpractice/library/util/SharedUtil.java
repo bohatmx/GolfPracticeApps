@@ -12,6 +12,8 @@ import com.boha.golfpractice.library.dto.GcmDeviceDTO;
 import com.boha.golfpractice.library.dto.PlayerDTO;
 import com.google.gson.Gson;
 
+import java.util.Date;
+
 /**
  * Created by aubreyM on 2014/10/12.
  */
@@ -25,6 +27,7 @@ public class SharedUtil {
             LAST_COACH_ID = "lastStaffID",
             GCM_REGISTRATION_ID = "gcm",
             THEME = "theme",
+            GOLF_COURSE_REFRESH_DATE = "gcRefreshDate",
             AUTH_TOKEN = "token",
             LOG = "SharedUtil",
             APP_VERSION = "appVersion";
@@ -119,6 +122,30 @@ public class SharedUtil {
 
         }
         return player;
+    }
+
+    public static void saveGolfCourseRefreshDate(Context ctx) {
+
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putLong(GOLF_COURSE_REFRESH_DATE, new Date().getTime());
+        ed.commit();
+        Log.e("SharedUtil", "%%%%% GOLF_COURSE_REFRESH_DATE saved in SharedPreferences");
+    }
+
+
+    public static Date getGolfCourseRefreshDate(Context ctx) {
+
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        Long dt = sp.getLong(GOLF_COURSE_REFRESH_DATE, 0);
+        if (dt > 0) {
+            return  new Date(dt);
+        } else {
+            return null;
+        }
+
     }
 
     public static void saveCoach(Context ctx, CoachDTO dto) {

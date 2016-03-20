@@ -5,6 +5,7 @@
  */
 package com.boha.golfpractice.library.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
  *
  * @author aubreymalabie
  */
-public class ResponseDTO {
+public class ResponseDTO implements Serializable {
     private int statusCode;
     private String message, GCMRegistrationID;
     private double elapsedSeconds;
@@ -25,6 +26,18 @@ public class ResponseDTO {
     private List<VideoUploadDTO> videoUploadList;
     private List<ClubDTO> clubList;
     private List<HoleDTO> holeList;
+    private List<ShotShapeDTO> shotShapeList;
+
+    public List<ShotShapeDTO> getShotShapeList() {
+        if (shotShapeList == null) {
+            shotShapeList = new ArrayList<>();
+        }
+        return shotShapeList;
+    }
+
+    public void setShotShapeList(List<ShotShapeDTO> shotShapeList) {
+        this.shotShapeList = shotShapeList;
+    }
 
     public double getElapsedSeconds() {
         return elapsedSeconds;

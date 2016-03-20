@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_session"
+            android:icon="@android:drawable/ic_menu_compass"
+            android:title="Practice Sessions" />
+        <item
+            android:id="@+id/nav_messaging"
+            android:icon="@android:drawable/ic_menu_send"
+            android:visible="false"
+            android:title="Messaging" />
+
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@android:drawable/ic_menu_manage"
+            android:title="My Profile" />
+
+        <item
+            android:id="@+id/nav_course_map"
+            android:icon="@android:drawable/ic_input_add"
+            android:title="Course Map" />
+
+        <item
+            android:id="@+id/nav_video"
+            android:icon="@android:drawable/ic_media_play"
+            android:title="Player Videos" />
+        <item
+            android:id="@+id/nav_coaches"
+            android:icon="@android:drawable/ic_btn_speak_now"
+            android:title="Coaches" />
+
+    </group>
+
+
+</menu>

@@ -13,27 +13,43 @@ import java.util.List;
  *
  * @author aubreymalabie
  */
-public class HoleStatDTO implements Serializable {
+public class HoleStatDTO implements Serializable, Comparable<HoleStatDTO> {
 
     private static final long serialVersionUID = 1L;
-    private Integer holeStatID;
-    private Boolean fairwayHit;
-    private Boolean fairwayBunkerHit;
-    private Integer distanceToPin;
-    private Boolean greenInRegulation;
-    private Integer numberOfPutts;
-    private Boolean greensideBunkerHit;
-    private Integer score;
+    private Integer holeStatID, mistakes;
+    private Boolean fairwayHit = Boolean.FALSE;
+    private Boolean fairwayBunkerHit = Boolean.FALSE;
+    private Integer distanceToPin = 0;
+    private Boolean greenInRegulation = Boolean.FALSE;
+    private Integer numberOfPutts = 0;
+    private Boolean greensideBunkerHit  = Boolean.FALSE;
+    private Integer score = 0, holeNumber = 1;
     private String remarks;
-    private Boolean inRough;
-    private Boolean inWater;
-    private Boolean outOfBounds;
+    private Boolean inRough = Boolean.FALSE;
+    private Boolean inWater  = Boolean.FALSE;
+    private Boolean outOfBounds = Boolean.FALSE;
     private Integer practiceSessionID;
-    private Integer holeID;
-    private Double lengthOfPutt;
+    private HoleDTO hole;
+    private Double lengthOfPutt = Double.valueOf(0);
     private List<ClubUsedDTO> clubUsedList;
 
     public HoleStatDTO() {
+    }
+
+    public Integer getMistakes() {
+        return mistakes;
+    }
+
+    public void setMistakes(Integer mistakes) {
+        this.mistakes = mistakes;
+    }
+
+    public Integer getHoleNumber() {
+        return holeNumber;
+    }
+
+    public void setHoleNumber(Integer holeNumber) {
+        this.holeNumber = holeNumber;
     }
 
     public Double getLengthOfPutt() {
@@ -149,14 +165,13 @@ public class HoleStatDTO implements Serializable {
         this.practiceSessionID = practiceSessionID;
     }
 
-    public Integer getHoleID() {
-        return holeID;
+    public HoleDTO getHole() {
+        return hole;
     }
 
-    public void setHoleID(Integer holeID) {
-        this.holeID = holeID;
+    public void setHole(HoleDTO hole) {
+        this.hole = hole;
     }
-   
 
     public List<ClubUsedDTO> getClubUsedList() {
         if (clubUsedList == null) {
@@ -178,7 +193,6 @@ public class HoleStatDTO implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof HoleStatDTO)) {
             return false;
         }
@@ -193,5 +207,15 @@ public class HoleStatDTO implements Serializable {
     public String toString() {
         return "com.boha.golfpractice.data.HoleStat[ holeStatID=" + holeStatID + " ]";
     }
-    
+
+    @Override
+    public int compareTo(HoleStatDTO another) {
+        if (this.holeNumber < another.holeNumber) {
+            return -1;
+        }
+        if (this.holeNumber > another.holeNumber) {
+            return 1;
+        }
+        return 0;
+    }
 }

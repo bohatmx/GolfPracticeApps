@@ -1,5 +1,6 @@
 package com.boha.golfpractice.library.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.os.Environment;
@@ -39,10 +40,10 @@ public class OKUtil {
 
 
     static Gson gson = new Gson();
-    public static final String DEV_URL = "http://192.168.1.233:40405/mp/gatex";
-    public static final String PROD_URL = "http://bohamaker.com:3030/mp/gatex";
+    public static final String DEV_URL = "http://192.168.1.233:8080/gp/prac";
+    public static final String PROD_URL = "http://bohamaker.com:3030/gp/prac";
 
-    public static final String DEV_URL_CACHED = "http://192.168.1.233:40405/mp/cachedRequests";
+    public static final String DEV_URL_CACHED = "http://192.168.1.233:8080/mp/cachedRequests";
     public static final String PROD_URL_CACHED = "http://bohamaker.com:3030/mp/cachedRequests";
 
     static final String FAILED_RESPONSE_NOT_SUCCESSFUL = "Request failed. Response not successful";
@@ -70,7 +71,7 @@ public class OKUtil {
         boolean isDebuggable = 0 != (ctx.getApplicationInfo().flags
                 &= ApplicationInfo.FLAG_DEBUGGABLE);
         if (isDebuggable) {
-            return PROD_URL;
+            return DEV_URL;
         } else {
             return PROD_URL;
         }
@@ -80,7 +81,7 @@ public class OKUtil {
         boolean isDebuggable = 0 != (ctx.getApplicationInfo().flags
                 &= ApplicationInfo.FLAG_DEBUGGABLE);
         if (isDebuggable) {
-            return PROD_URL_CACHED;
+            return DEV_URL_CACHED;
         } else {
             return PROD_URL_CACHED;
         }
@@ -93,7 +94,7 @@ public class OKUtil {
      * @param listener
      * @throws OKHttpException
      */
-    public void sendGETRequest(final Context ctx, final RequestDTO req,
+    public void sendGETRequest(final Context ctx, final RequestDTO req, Activity activity,
                                final OKListener listener) throws OKHttpException {
         String mURL = getURL(ctx);
         OkHttpClient client = new OkHttpClient();
@@ -111,11 +112,11 @@ public class OKUtil {
                 .url(url)
                 .build();
 
-        execute(client, okHttpRequest, req.isZipResponse(), listener);
+        execute(client, okHttpRequest, req.isZipResponse(), activity,listener);
     }
 
     public void sendPOSTRequest(final Context ctx,
-                                final RequestList req,
+                                final RequestList req, Activity activity,
                                 final OKListener listener) throws OKHttpException {
 
         String url = getURLCached(ctx);
@@ -132,7 +133,7 @@ public class OKUtil {
         Log.w(LOG, "### sending request to server, requestList: "
                 + req.getRequests().size()
                 + "\n" + url);
-        execute(client, request, false, listener);
+        execute(client, request, false, activity,listener);
 
 
     }
@@ -157,11 +158,11 @@ public class OKUtil {
         Response response = client.newCall(okHttpRequest).execute();
         ResponseDTO m;
         if (req.isZipResponse()) {
-            m = processZipResponse(response, null);
+            m = processZipResponse(response);
         } else {
-            m = processResponse(response, null);
+            m = processResponse(response);
         }
-        
+
         final long end = System.currentTimeMillis();
         Log.e(LOG, "### Server responded, " + okHttpRequest.urlString() + "\nround trip elapsed: " + getElapsed(start, end)
                 + ", server elapsed: " + m.getElapsedSeconds()
@@ -171,7 +172,7 @@ public class OKUtil {
     }
 
     public void sendPOSTRequest(final Context ctx,
-                                final RequestDTO req,
+                                final RequestDTO req, Activity activity,
                                 final OKListener listener) throws OKHttpException {
 
         String url = getURL(ctx);
@@ -187,13 +188,14 @@ public class OKUtil {
         Log.w(LOG, "### sending request to server, requestType: "
                 + req.getRequestType()
                 + "\n" + url);
-        execute(client, request, false, listener);
+        execute(client, request, false, activity,listener);
 
 
     }
 
     private void execute(OkHttpClient client, final Request req,
                          final boolean zipResponseRequested,
+                         final Activity activity,
                          final OKListener listener) {
 
         final long start = System.currentTimeMillis();
@@ -201,8 +203,14 @@ public class OKUtil {
             @Override
             public void onFailure(Request request, IOException e) {
                 long end = System.currentTimeMillis();
-                Log.e(LOG, "### Server responded with ERROR, round trip elapsed: " + getElapsed(start, end));
-                listener.onError(FAILED_IO);
+                Log.e(LOG, "### Server responded with ERROR, round trip elapsed: " + getElapsed(start, end), e);
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onError(FAILED_IO);
+                    }
+                });
+
             }
 
             @Override
@@ -212,22 +220,53 @@ public class OKUtil {
                     Log.e(LOG, "%%%%%% ERROR from OKHttp "
                             + response.networkResponse().toString()
                             + response.message() + "\nresponse.isSuccessful: " + response.isSuccessful());
-                    listener.onError(FAILED_RESPONSE_NOT_SUCCESSFUL);
-                    return;
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onError(FAILED_RESPONSE_NOT_SUCCESSFUL);
+                            return;
+                        }
+                    });
+
                 }
-                ResponseDTO serverResponse = new ResponseDTO();
+                final ResponseDTO serverResponse;
                 if (zipResponseRequested) {
-                    processZipResponse(response, listener);
+                    serverResponse = processZipResponse(response);
 
                 } else {
-                    processResponse(response, listener);
+                    serverResponse = processResponse(response);
                 }
                 response.body().close();
+
                 long end = System.currentTimeMillis();
                 Log.e(LOG, "### Server responded, " + req.urlString() + "\nround trip elapsed: " + getElapsed(start, end)
                         + ", server elapsed: " + serverResponse.getElapsedSeconds()
                         + ", statusCode: " + serverResponse.getStatusCode()
                         + "\nmessage: " + serverResponse.getMessage());
+
+                if (activity != null) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (listener != null) {
+                                if (serverResponse.getStatusCode() == 0) {
+                                    listener.onResponse(serverResponse);
+                                } else {
+                                    listener.onError(serverResponse.getMessage());
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    if (listener != null) {
+                        if (serverResponse.getStatusCode() == 0) {
+                            listener.onResponse(serverResponse);
+                        } else {
+                            listener.onError(serverResponse.getMessage());
+                        }
+                    }
+                }
+
             }
         };
 
@@ -235,32 +274,22 @@ public class OKUtil {
 
     }
 
-    private ResponseDTO processResponse(Response response, OKListener listener) {
+    private ResponseDTO processResponse(Response response) {
         ResponseDTO serverResponse = new ResponseDTO();
         try {
             String json = response.body().string();
             serverResponse = gson.fromJson(json, ResponseDTO.class);
             Log.w(LOG, "### Data received: " + getLength(json.length()));
-            if (listener != null) {
-                if (serverResponse.getStatusCode() == 0) {
-                    listener.onResponse(serverResponse);
-                } else {
-                    listener.onError(serverResponse.getMessage());
-                }
-            }
+
         } catch (Exception e) {
             Log.e(LOG, "OKUtil Failed to get data from response body", e);
-            if (listener != null) {
-                listener.onError(FAILED_DATA_EXTRACTION);
-            } else {
-                serverResponse.setStatusCode(88);
-                serverResponse.setMessage("Failed to get server response data");
-            }
+            serverResponse.setStatusCode(88);
+            serverResponse.setMessage("Failed to get server response data");
         }
         return serverResponse;
     }
 
-    private ResponseDTO processZipResponse(Response response, OKListener listener) {
+    private ResponseDTO processZipResponse(Response response) {
         final File directory = Environment.getExternalStorageDirectory();
         ResponseDTO serverResponse = new ResponseDTO();
         try {
@@ -288,24 +317,11 @@ public class OKUtil {
             Log.e(LOG, "Failed to unpack file", e);
             try {
                 response.body().close();
-                if (listener != null) {
-                    listener.onError(FAILED_UNPACK);
-                } else {
-                    serverResponse.setStatusCode(88);
-                    serverResponse.setMessage("Error processing data from the server");
-                    return serverResponse;
-                }
+
             } catch (IOException e1) {
                 Log.e(LOG, "failed", e);
             }
 
-        }
-        if (listener != null) {
-            if (serverResponse.getStatusCode() == 0) {
-                listener.onResponse(serverResponse);
-            } else {
-                listener.onError(serverResponse.getMessage());
-            }
         }
 
         return serverResponse;

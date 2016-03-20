@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">GPLibrary</string>
+    <string name="title_activity_registration">RegistrationActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_golf_course_list">GolfCourseListActivity</string>
+    <string name="record_prac">The best way to record your practice</string>
+    <string name="error_invalid_password">Invalid password, may be too short</string>
+    <string name="error_invalid_email">Does not look like a proper email address</string>
+    <string name="permission_rationale">We may need to access your contacts so you can send stuff to people you know</string>
 </resources>
