@@ -40,10 +40,10 @@ public class OKUtil {
 
 
     static Gson gson = new Gson();
-    public static final String DEV_URL = "http://192.168.1.233:8080/gp/prac";
+    public static final String DEV_URL = "http://192.168.1.233:40405/gp/prac";
     public static final String PROD_URL = "http://bohamaker.com:3030/gp/prac";
 
-    public static final String DEV_URL_CACHED = "http://192.168.1.233:8080/mp/cachedRequests";
+    public static final String DEV_URL_CACHED = "http://192.168.1.233:40405/mp/cachedRequests";
     public static final String PROD_URL_CACHED = "http://bohamaker.com:3030/mp/cachedRequests";
 
     static final String FAILED_RESPONSE_NOT_SUCCESSFUL = "Request failed. Response not successful";
@@ -188,7 +188,7 @@ public class OKUtil {
         Log.w(LOG, "### sending request to server, requestType: "
                 + req.getRequestType()
                 + "\n" + url);
-        execute(client, request, false, activity,listener);
+        execute(client, request, req.isZipResponse(), activity,listener);
 
 
     }
@@ -278,6 +278,7 @@ public class OKUtil {
         ResponseDTO serverResponse = new ResponseDTO();
         try {
             String json = response.body().string();
+            Log.w(LOG,json);
             serverResponse = gson.fromJson(json, ResponseDTO.class);
             Log.w(LOG, "### Data received: " + getLength(json.length()));
 
@@ -317,7 +318,6 @@ public class OKUtil {
             Log.e(LOG, "Failed to unpack file", e);
             try {
                 response.body().close();
-
             } catch (IOException e1) {
                 Log.e(LOG, "failed", e);
             }

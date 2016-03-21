@@ -19,6 +19,7 @@ import com.google.android.gms.gcm.GcmNetworkManager;
 import com.snappydb.DB;
 import com.snappydb.DBFactory;
 import com.snappydb.SnappydbException;
+import com.squareup.leakcanary.LeakCanary;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
@@ -113,13 +114,14 @@ public class MonApp extends Application implements Application.ActivityLifecycle
     public void onCreate() {
         //MultiDex.install(getApplicationContext());
         super.onCreate();
+        LeakCanary.install(this);
         StringBuilder sb = new StringBuilder();
         sb.append("\n\n\n#######################################\n");
-        sb.append("#######################################\n");
+        sb.append("###################################################\n");
         sb.append("###\n");
-        sb.append("###  Monitor App has started, setting up resources ...............\n");
+        sb.append("###  TGolf App has started, setting up resources ...............\n");
         sb.append("###\n");
-        sb.append("#######################################\n\n");
+        sb.append("###################################################\n\n");
 
         Log.d(LOG, sb.toString());
         boolean isDebuggable = 0 != (getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE);

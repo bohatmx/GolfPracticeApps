@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.boha.golfpractice.golfer.R;
 import com.boha.golfpractice.library.activities.GolfCourseListActivity;
 import com.boha.golfpractice.library.activities.HoleStatActivity;
+import com.boha.golfpractice.library.activities.HoleStatViewerActivity;
 import com.boha.golfpractice.library.activities.MonApp;
 import com.boha.golfpractice.library.dto.PracticeSessionDTO;
 import com.boha.golfpractice.library.dto.RequestDTO;
@@ -87,7 +88,7 @@ public class PlayerMainActivity extends AppCompatActivity implements SessionList
             //window.setStatusBarColor(themeDarkColor);
             //window.setNavigationBarColor(themeDarkColor);
         }
-        Util.setCustomActionBar(ctx, getSupportActionBar(), "GolfPractice", getString(R.string.record_prac),
+        Util.setCustomActionBar(ctx, getSupportActionBar(), "TGolf", getString(R.string.record_prac),
                 ContextCompat.getDrawable(ctx, com.boha.golfpractice.library.R.drawable.golfball48));
         snackbar = Snackbar.make(mPager,"Refreshing data from cloud server, hang on a second ...",Snackbar.LENGTH_INDEFINITE);
         buildPages();
@@ -101,6 +102,7 @@ public class PlayerMainActivity extends AppCompatActivity implements SessionList
     private void buildPages() {
         pageFragmentList = new ArrayList<>();
         sessionListFragment = SessionListFragment.newInstance(practiceSessionList);
+        sessionListFragment.setApp((MonApp)getApplication());
 
         pageFragmentList.add(sessionListFragment);
         adapter = new StaffPagerAdapter(getSupportFragmentManager());
@@ -155,9 +157,15 @@ public class PlayerMainActivity extends AppCompatActivity implements SessionList
     static final int PRACTICE_SESSION_START = 123;
     @Override
     public void onSessionClicked(PracticeSessionDTO session) {
-        Intent m = new Intent(ctx, HoleStatActivity.class);
-        m.putExtra("session",session);
-        startActivityForResult(m,PRACTICE_SESSION_START);
+        if (session.getClosed() == Boolean.FALSE) {
+            Intent m = new Intent(ctx, HoleStatActivity.class);
+            m.putExtra("session", session);
+            startActivityForResult(m, PRACTICE_SESSION_START);
+        } else {
+            Intent m = new Intent(ctx, HoleStatViewerActivity.class);
+            m.putExtra("session", session);
+            startActivity(m);
+        }
 
     }
 
@@ -264,7 +272,11 @@ public class PlayerMainActivity extends AppCompatActivity implements SessionList
             okUtil.sendGETRequest(ctx, w, this, new OKUtil.OKListener() {
                 @Override
                 public void onResponse(final ResponseDTO response) {
-
+                    setRefreshActionButtonState(false);
+                    if (response.getPracticeSessionList().isEmpty()) {
+                        //onNewSessionRequested();
+                        return;
+                    }
                     SnappyPractice.addPracticeSessions((MonApp) getApplication(), response.getPracticeSessionList(), new SnappyPractice.DBWriteListener() {
                         @Override
                         public void onDataWritten() {

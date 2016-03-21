@@ -16,18 +16,18 @@ import java.util.List;
 public class HoleStatDTO implements Serializable, Comparable<HoleStatDTO> {
 
     private static final long serialVersionUID = 1L;
-    private Integer holeStatID, mistakes;
-    private Boolean fairwayHit = Boolean.FALSE;
-    private Boolean fairwayBunkerHit = Boolean.FALSE;
+    private Integer holeStatID, mistakes = 0;
+    private Boolean fairwayHit = false;
+    private Boolean fairwayBunkerHit = false;
     private Integer distanceToPin = 0;
-    private Boolean greenInRegulation = Boolean.FALSE;
+    private Boolean greenInRegulation = false;
     private Integer numberOfPutts = 0;
-    private Boolean greensideBunkerHit  = Boolean.FALSE;
-    private Integer score = 0, holeNumber = 1;
+    private Boolean greensideBunkerHit  = false;
+    private Integer score = 0;
     private String remarks;
-    private Boolean inRough = Boolean.FALSE;
-    private Boolean inWater  = Boolean.FALSE;
-    private Boolean outOfBounds = Boolean.FALSE;
+    private Boolean inRough = false;
+    private Boolean inWater  = false;
+    private Boolean outOfBounds = false;
     private Integer practiceSessionID;
     private HoleDTO hole;
     private Double lengthOfPutt = Double.valueOf(0);
@@ -42,14 +42,6 @@ public class HoleStatDTO implements Serializable, Comparable<HoleStatDTO> {
 
     public void setMistakes(Integer mistakes) {
         this.mistakes = mistakes;
-    }
-
-    public Integer getHoleNumber() {
-        return holeNumber;
-    }
-
-    public void setHoleNumber(Integer holeNumber) {
-        this.holeNumber = holeNumber;
     }
 
     public Double getLengthOfPutt() {
@@ -210,12 +202,14 @@ public class HoleStatDTO implements Serializable, Comparable<HoleStatDTO> {
 
     @Override
     public int compareTo(HoleStatDTO another) {
-        if (this.holeNumber < another.holeNumber) {
-            return -1;
-        }
-        if (this.holeNumber > another.holeNumber) {
-            return 1;
-        }
+        try {
+            if (this.hole.getHoleNumber() < another.hole.getHoleNumber()) {
+                return -1;
+            }
+            if (this.hole.getHoleNumber() > another.hole.getHoleNumber()) {
+                return 1;
+            }
+        } catch (Exception e){};
         return 0;
     }
 }

@@ -41,6 +41,9 @@ public class MonLog {
 
     }
     private static boolean isDebuggable(Context ctx) {
+        if (ctx == null) {
+            return true;
+        }
         boolean isDebuggable = 0 != (ctx.getApplicationInfo().flags
                 &= ApplicationInfo.FLAG_DEBUGGABLE);
         return isDebuggable;

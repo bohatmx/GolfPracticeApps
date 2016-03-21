@@ -13,8 +13,7 @@
         <activity
             android:name=".activities.GolfCourseListActivity"
             android:label="@string/title_activity_golf_course_list"
-            android:screenOrientation="portrait"
-            android:theme="@style/GreenTheme" />
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".services.GolfCourseRefreshService"
@@ -26,7 +25,17 @@
 
         <service
             android:name=".services.PracticeUploadService"
-            android:exported="false"></service>
+            android:exported="false" />
+        <service
+            android:name=".services.SesssionCloserService"
+            android:exported="false" />
+
+        <activity android:name=".activities.HoleStatViewerActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".activities.ClubAndShapeActivity"
+            android:screenOrientation="portrait">
+
+        </activity>
     </application>
 
 </manifest>

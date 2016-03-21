@@ -21,15 +21,6 @@
         android:layout_marginRight="@dimen/mon_divider"
         android:text="0" />
 
-    <TextView
-        android:id="@+id/message"
-        style="@style/TextStyle"
-        android:layout_margin="@dimen/mon_margin"
-        android:elevation="@dimen/mon_padding"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerInParent="true"
-        android:text="You have no saved Practice Sessions.\n\nPlease hit the round thingy to add your first session.\n\nThank you for joining up!" />
 
 
     <android.support.design.widget.FloatingActionButton

@@ -30,8 +30,28 @@ public class SharedUtil {
             GOLF_COURSE_REFRESH_DATE = "gcRefreshDate",
             AUTH_TOKEN = "token",
             LOG = "SharedUtil",
+            FIRST_TIME = "fisrtTime",
             APP_VERSION = "appVersion";
 
+    public static void setFirstTime(Context ctx) {
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putBoolean(FIRST_TIME, false);
+        ed.commit();
+
+        Log.w(LOG, "#### FIRST_TIME saved: false");
+
+    }
+
+    public static boolean getFirstTime(Context ctx) {
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        boolean j = sp.getBoolean(FIRST_TIME, true);
+        Log.i(LOG, "#### FIRST_TIME retrieved: " + j);
+        return j;
+    }
     public static void setThemeSelection(Context ctx, int theme) {
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);
@@ -99,7 +119,7 @@ public class SharedUtil {
         return registrationId;
     }
 
-     public static void savePlayer(Context ctx, PlayerDTO dto) {
+    public static void savePlayer(Context ctx, PlayerDTO dto) {
 
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);
@@ -141,7 +161,7 @@ public class SharedUtil {
                 .getDefaultSharedPreferences(ctx);
         Long dt = sp.getLong(GOLF_COURSE_REFRESH_DATE, 0);
         if (dt > 0) {
-            return  new Date(dt);
+            return new Date(dt);
         } else {
             return null;
         }
@@ -201,7 +221,6 @@ public class SharedUtil {
             Log.e("SharedUtil", "%%%%% Device found in SharedPreferences: " + co.getModel());
         return co;
     }
-
 
 
     /**

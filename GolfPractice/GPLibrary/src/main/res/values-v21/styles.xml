@@ -7,8 +7,6 @@
         <item name="android:windowActionBarOverlay">true</item>
         <item name="android:actionBarStyle">@style/smallWhiteText</item>
         <item name="android:textViewStyle">@style/RobotoTextStyle</item>
-        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
-
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowEnterTransition">@android:transition/slide_bottom</item>
         <item name="android:windowExitTransition">@android:transition/slide_bottom</item>
@@ -17,6 +15,9 @@
         <item name="android:windowAllowReturnTransitionOverlap">true</item>
         <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
         <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
+        <item name="android:buttonStyle">@style/ButtonAppTheme</item>
+
+
 
     </style>
 
@@ -164,11 +165,11 @@
         <item name="android:textStyle">normal</item>
     </style>
 
-    <style name="GreenTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+
+
+
+    <style name="ButtonAppTheme" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:textColor">@color/black</item>
     </style>
 
 

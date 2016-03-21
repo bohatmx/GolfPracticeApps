@@ -14,17 +14,24 @@ import java.util.List;
  *
  * @author aubreymalabie
  */
-public class ClubDTO implements Serializable {
+public class ClubDTO implements Serializable, Comparable<ClubDTO> {
 
     private static final long serialVersionUID = 1L;
     private Integer clubID;
     private String clubName;
     private List<ClubUsedDTO> clubUsedList;
+    private boolean selected;
 
     public ClubDTO() {
     }
 
+    public boolean isSelected() {
+        return selected;
+    }
 
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
 
     public Integer getClubID() {
         return clubID;
@@ -74,5 +81,9 @@ public class ClubDTO implements Serializable {
     public String toString() {
         return "com.boha.golfpractice.data.Club[ clubID=" + clubID + " ]";
     }
-    
+
+    @Override
+    public int compareTo(ClubDTO another) {
+        return this.clubName.compareTo(another.clubName);
+    }
 }

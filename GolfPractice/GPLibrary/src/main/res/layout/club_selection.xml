@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/mon_margin">
+
+        <TextView
+            style="@style/Title2TextStyleGrey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="Clubs and Shapes" />
+
+        <Button
+            android:id="@+id/btnDone"
+            style="@style/ButtonAppTheme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@color/red_500"
+            android:text="Done"
+            android:textColor="@color/white" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/clubLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/top"
+        android:layout_margin="@dimen/mon_margin"
+        android:orientation="horizontal">
+
+        <ScrollView
+            android:layout_weight="2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RadioGroup
+                android:id="@+id/clubRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:numColumns="2" />
+
+        </ScrollView>
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:background="@color/beige_pale"
+            android:orientation="vertical">
+
+
+        </RadioGroup>
+    </LinearLayout>
+
+</RelativeLayout>

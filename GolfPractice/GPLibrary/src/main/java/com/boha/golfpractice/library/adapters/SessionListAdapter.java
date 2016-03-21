@@ -1,10 +1,12 @@
 package com.boha.golfpractice.library.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.boha.golfpractice.library.R;
@@ -25,6 +27,7 @@ public class SessionListAdapter extends RecyclerView.Adapter<SessionListAdapter.
 
     public interface SessionListener {
         void onSessionClicked(PracticeSessionDTO session);
+        void onSessionCloseRequired(PracticeSessionDTO session);
     }
 
     private SessionListener mListener;
@@ -79,6 +82,19 @@ public class SessionListAdapter extends RecyclerView.Adapter<SessionListAdapter.
             }
         }
         holder.numMistakes.setText(""+mistakes);
+        if (p.getClosed() == Boolean.FALSE) {
+            holder.btnClose.setEnabled(true);
+            holder.btnClose.setText("Close Session");
+            holder.btnClose.setAlpha(1.0f);
+            holder.golfCourse.setTextColor(ContextCompat.getColor(ctx,R.color.black));
+
+        } else {
+            holder.btnClose.setEnabled(false);
+            holder.btnClose.setText("Closed");
+            holder.btnClose.setAlpha(0.5f);
+            holder.golfCourse.setTextColor(ContextCompat.getColor(ctx,R.color.grey_400));
+        }
+
         holder.golfCourse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,6 +105,12 @@ public class SessionListAdapter extends RecyclerView.Adapter<SessionListAdapter.
             @Override
             public void onClick(View v) {
                 mListener.onSessionClicked(p);
+            }
+        });
+        holder.btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onSessionCloseRequired(p);
             }
         });
         Statics.setRobotoFontLight(ctx, holder.golfCourse);
@@ -106,6 +128,7 @@ public class SessionListAdapter extends RecyclerView.Adapter<SessionListAdapter.
 
     public class SessionViewHolder extends RecyclerView.ViewHolder  {
         protected TextView golfCourse, sessionDate, number;
+        protected Button btnClose;
         protected TextView numHoles, numStrokes, numUnder, numOver, par, numMistakes;
 
 
@@ -131,6 +154,8 @@ public class SessionListAdapter extends RecyclerView.Adapter<SessionListAdapter.
                     .findViewById(R.id.mistakes);
             number = (TextView) itemView
                     .findViewById(R.id.number);
+            btnClose = (Button) itemView
+                    .findViewById(R.id.btnClose);
 
 
 

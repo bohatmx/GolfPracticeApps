@@ -15,7 +15,6 @@ import com.boha.golfpractice.library.util.MonLog;
 import com.boha.golfpractice.library.util.OKUtil;
 import com.boha.golfpractice.library.util.SnappyPractice;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,12 +54,8 @@ public class PracticeUploadService extends IntentService {
 
     private void sendPracticeSession(PracticeSessionDTO session) {
         //remove unused holestats
-        List<HoleStatDTO> list = new ArrayList<>();
-        for (HoleStatDTO hs: session.getHoleStatList()) {
-            if (hs.getScore().intValue() > 0) {
-                list.add(hs);
-            }
-        }
+        List<HoleStatDTO> list = session.getHoleStatList();
+
         if (list.isEmpty()) {
             Log.w(LOG,"No HoleStats found in PracticeSession, quittin");
             return;
@@ -68,9 +63,13 @@ public class PracticeUploadService extends IntentService {
             MonLog.e(getApplicationContext(),LOG,"Sending practiceSession with " + list.size() + " holeStats");
         }
 
-
-        session.setHoleStatList(list);
-        session.setNumberOfHoles(list.size());
+        int numberOfHoles = 0;
+        for (HoleStatDTO hs: list) {
+            if (hs.getScore().intValue() > 0) {
+                numberOfHoles++;
+            }
+        }
+        session.setNumberOfHoles(numberOfHoles);
         session.setGolfCourseID(session.getGolfCourse().getGolfCourseID());
         session.setGolfCourse(null);
         int totalStrokes = 0, totalPar = 0, totalMistakes = 0;
@@ -114,7 +113,7 @@ public class PracticeUploadService extends IntentService {
 
         RequestDTO req = new RequestDTO(RequestDTO.ADD_PRACTICE_SESSION);
         req.setPracticeSession(session);
-        req.setZipResponse(true);
+        req.setZipResponse(false);
         new DTask().execute(req);
 
     }

@@ -21,9 +21,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.boha.golfpractice.library.R;
 import com.boha.golfpractice.library.dto.GolfCourseDTO;
+import com.boha.golfpractice.library.dto.HoleDTO;
+import com.boha.golfpractice.library.dto.HoleStatDTO;
 import com.boha.golfpractice.library.dto.PracticeSessionDTO;
 import com.boha.golfpractice.library.dto.RequestDTO;
 import com.boha.golfpractice.library.dto.ResponseDTO;
@@ -35,6 +38,7 @@ import com.boha.golfpractice.library.util.SharedUtil;
 import com.boha.golfpractice.library.util.SnappyGolfCourse;
 import com.boha.golfpractice.library.util.SnappyPractice;
 import com.boha.golfpractice.library.util.Util;
+import com.boha.golfpractice.library.util.WebCheck;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -55,6 +59,7 @@ public class GolfCourseListActivity extends AppCompatActivity implements GoogleA
     Context ctx;
 
     FloatingActionButton fab;
+    FrameLayout frameLayout;
     static final String LOG = GolfCourseListActivity.class.getSimpleName();
 
     @Override
@@ -62,6 +67,7 @@ public class GolfCourseListActivity extends AppCompatActivity implements GoogleA
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_golf_course_list);
         ctx = getApplicationContext();
+        frameLayout = (FrameLayout)findViewById(R.id.frameLayout);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -84,6 +90,13 @@ public class GolfCourseListActivity extends AppCompatActivity implements GoogleA
                 ContextCompat.getDrawable(ctx, com.boha.golfpractice.library.R.drawable.golfball48));
 
         getCachedCourses();
+
+        boolean isFirstTime = SharedUtil.getFirstTime(ctx);
+        if (isFirstTime) {
+            SharedUtil.setFirstTime(ctx);
+
+        }
+
     }
 
     private void addFragment() {
@@ -304,8 +317,51 @@ public class GolfCourseListActivity extends AppCompatActivity implements GoogleA
         practiceSession.setGolfCourse(c);
         practiceSession.setPlayerID(SharedUtil.getPlayer(ctx).getPlayerID());
         practiceSession.setSessionDate(new Date().getTime());
+        for (HoleDTO hole: practiceSession.getGolfCourse().getHoleList()) {
+            HoleStatDTO m = new HoleStatDTO();
+            m.setHole(hole);
+            practiceSession.getHoleStatList().add(m);
+        }
+        sendPracticeSession(practiceSession);
 
-        SnappyPractice.addCurrentPracticeSession((MonApp) getApplication(), practiceSession, new SnappyPractice.DBWriteListener() {
+
+    }
+    private void sendPracticeSession(PracticeSessionDTO s) {
+
+        RequestDTO w = new RequestDTO(RequestDTO.ADD_PRACTICE_SESSION);
+        w.setPracticeSession(s);
+        w.setZipResponse(false);
+
+        if (WebCheck.checkNetworkAvailability(getApplicationContext()).isNetworkUnavailable()) {
+            cacheSession(s);
+            return;
+        }
+        OKUtil util = new OKUtil();
+        setRefreshActionButtonState(true);
+        try {
+            util.sendPOSTRequest(this, w, this, new OKUtil.OKListener() {
+                @Override
+                public void onResponse(final ResponseDTO response) {
+                    setRefreshActionButtonState(false);
+                    cacheSession(response.getPracticeSessionList().get(0));
+                }
+
+                @Override
+                public void onError(String message) {
+                    setRefreshActionButtonState(false);
+                    Util.showErrorToast(getApplicationContext(),message);
+
+                }
+            });
+        } catch (OKHttpException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void cacheSession(PracticeSessionDTO practiceSession) {
+        this.practiceSession = practiceSession;
+        SnappyPractice.addCurrentPracticeSession((MonApp) getApplication(),
+                practiceSession, new SnappyPractice.DBWriteListener() {
             @Override
             public void onDataWritten() {
                 onBackPressed();
@@ -316,10 +372,7 @@ public class GolfCourseListActivity extends AppCompatActivity implements GoogleA
 
             }
         });
-
-
     }
-
     PracticeSessionDTO practiceSession;
 
     @Override

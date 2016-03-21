@@ -23,7 +23,7 @@ public class PracticeSessionDTO implements Serializable {
     private Integer totalStrokes;
     private Integer underPar;
     private Integer overPar;
-    private Boolean par;
+    private Boolean par, closed;
     private List<HoleStatDTO> holeStatList;
     private List<VideoUploadDTO> videoUploadList;
     private Integer playerID;
@@ -37,7 +37,21 @@ public class PracticeSessionDTO implements Serializable {
         this.practiceSessionID = practiceSessionID;
     }
 
+    public Boolean getClosed() {
+        if (closed == null) {
+            closed = Boolean.FALSE;
+        }
+        return closed;
+    }
+
+    public void setClosed(Boolean closed) {
+        this.closed = closed;
+    }
+
     public Integer getTotalMistakes() {
+        if (totalMistakes == null) {
+            totalMistakes = 0;
+        }
         return totalMistakes;
     }
 

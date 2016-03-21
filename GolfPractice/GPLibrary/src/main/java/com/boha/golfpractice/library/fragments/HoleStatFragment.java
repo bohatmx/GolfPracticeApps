@@ -27,11 +27,17 @@ import com.boha.golfpractice.library.dto.ClubUsedDTO;
 import com.boha.golfpractice.library.dto.HoleDTO;
 import com.boha.golfpractice.library.dto.HoleStatDTO;
 import com.boha.golfpractice.library.dto.PracticeSessionDTO;
+import com.boha.golfpractice.library.dto.RequestDTO;
+import com.boha.golfpractice.library.dto.ResponseDTO;
 import com.boha.golfpractice.library.dto.ShotShapeDTO;
 import com.boha.golfpractice.library.services.PracticeUploadService;
 import com.boha.golfpractice.library.util.HoleCounter;
 import com.boha.golfpractice.library.util.MonLog;
+import com.boha.golfpractice.library.util.OKHttpException;
+import com.boha.golfpractice.library.util.OKUtil;
 import com.boha.golfpractice.library.util.SnappyPractice;
+import com.boha.golfpractice.library.util.Util;
+import com.boha.golfpractice.library.util.WebCheck;
 
 import java.util.Collections;
 import java.util.List;
@@ -43,11 +49,11 @@ public class HoleStatFragment extends Fragment {
     private TextView distanceToPin;
     private CheckBox greenInRegulation;
     private TextView numberOfPutts;
-    private CheckBox greensideBunkerHit ;
+    private CheckBox greensideBunkerHit;
     private TextView score, clubTeeShot, clubToGreen;
     private String remarks;
     private CheckBox inRough;
-    private CheckBox inWater ;
+    private CheckBox inWater;
     private CheckBox outOfBounds;
     private TextView lengthOfPutt;
     FloatingActionButton fab;
@@ -82,25 +88,17 @@ public class HoleStatFragment extends Fragment {
 
     public void setPracticeSession(PracticeSessionDTO practiceSession) {
         this.practiceSession = practiceSession;
-        if (practiceSession.getHoleStatList().isEmpty()) {
-            for (HoleDTO h: practiceSession.getGolfCourse().getHoleList()) {
-                HoleStatDTO hs = new HoleStatDTO();
-                hs.setHole(h);
-                hs.setHoleNumber(h.getHoleNumber());
-                practiceSession.getHoleStatList().add(hs);
-            }
-            Collections.sort(practiceSession.getHoleStatList());
-            MonLog.d(getActivity(),LOG,"HoleStats sorted by holeNumber");
+        Collections.sort(practiceSession.getHoleStatList());
+        MonLog.d(getActivity(), LOG, "HoleStats sorted by holeNumber");
 
-        }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.w(LOG,"*********** onCreate");
+        Log.w(LOG, "*********** onCreate");
         if (getArguments() != null) {
-            practiceSession = (PracticeSessionDTO)getArguments().getSerializable("session");
+            practiceSession = (PracticeSessionDTO) getArguments().getSerializable("session");
             setPracticeSession(practiceSession);
 
         }
@@ -109,62 +107,31 @@ public class HoleStatFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.w(LOG,"*********** onCreate");
+        Log.w(LOG, "*********** onCreateView");
         view = inflater.inflate(R.layout.holestat, container, false);
         setFields();
         currentHoleNumber = 1;
         setHoleStatFields();
-        SnappyPractice.addCurrentPracticeSession(app,practiceSession,null);
-        gDetect = new GestureDetectorCompat(getActivity(), new GestureListener(new SwipeListener() {
-            @Override
-            public void onForwardSwipe() {
-                Log.i(LOG,"onForwardSwipe .............");
+        SnappyPractice.addCurrentPracticeSession(app, practiceSession, null);
 
-            }
-
-            @Override
-            public void onBackwardSwipe() {
-                Log.d(LOG,"onBackwardSwipe .............");
-            }
-        }));
-        puttsMain.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                gDetect.onTouchEvent(motionEvent);
-                return true;
-            }
-        });
-        mistakesMain.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                gDetect.onTouchEvent(motionEvent);
-                return true;
-            }
-        });
-        goodShitMain.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                gDetect.onTouchEvent(motionEvent);
-                return true;
-            }
-        });
 
         //receive notification when PracticeUploadService has completed work
         IntentFilter mStatusIntentFilter = new IntentFilter(
                 PracticeUploadService.BROADCAST_PUS);
         PracticeBroadcastReceiver rec = new PracticeBroadcastReceiver();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(
-                rec,mStatusIntentFilter);
-        MonLog.w(getActivity(),LOG,"PracticeBroadcastReceiver has been registered");
+                rec, mStatusIntentFilter);
+        MonLog.w(getActivity(), LOG, "PracticeBroadcastReceiver has been registered");
 
         return view;
     }
 
-    View goodShitMain,mistakesMain,puttsMain;
+    View goodShitMain, mistakesMain, puttsMain;
+
     private void setFields() {
-        Log.w(LOG,"*********** setFields");
-        clubTeeShot = (TextView)view.findViewById(R.id.clubTeeShot);
-        clubToGreen = (TextView)view.findViewById(R.id.clubGreenInReg);
+        Log.w(LOG, "*********** setFields");
+        clubTeeShot = (TextView) view.findViewById(R.id.clubTeeShot);
+        clubToGreen = (TextView) view.findViewById(R.id.clubGreenInReg);
         goodShitMain = view.findViewById(R.id.goodShitMain);
         mistakesMain = view.findViewById(R.id.mistakesMain);
         puttsMain = view.findViewById(R.id.puttsMain);
@@ -182,39 +149,46 @@ public class HoleStatFragment extends Fragment {
             }
         });
 
-        fab = (FloatingActionButton)view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MonLog.d(getActivity(),LOG,"PracticeUploadService starting ...");
-                Intent m = new Intent(getActivity(), PracticeUploadService.class);
-                getActivity().startService(m);
+        fab = (FloatingActionButton) view.findViewById(R.id.fab);
 
-            }
-        });
+
         distanceLayout = view.findViewById(R.id.distanceToGreenLayout);
         lengthPuttLayout = view.findViewById(R.id.puttLayout);
         numberPuttsLayout = view.findViewById(R.id.numberPuttsLayout);
         scoreLayout = view.findViewById(R.id.scoreLayout);
 
-        holeCounter = (HoleCounter)view.findViewById(R.id.holeCounter);
+        holeCounter = (HoleCounter) view.findViewById(R.id.holeCounter);
         holeCounter.setListener(new HoleCounter.HoleCounterListener() {
 
             @Override
             public void onHoleNumberChanged(int number) {
                 currentHoleNumber = number;
-                MonLog.d(getActivity(),LOG,"............ onHoleNumberChanged: " + number);
+                MonLog.d(getActivity(), LOG, "............ onHoleNumberChanged: " + number);
                 setHoleStatFields();
             }
         });
-        fairwayHit = (CheckBox)view.findViewById(R.id.chkFairwayHit);
-        fairwayBunkerHit = (CheckBox)view.findViewById(R.id.chkFairwayBunker);
-        greensideBunkerHit = (CheckBox)view.findViewById(R.id.chkGreensideBunker);
-        greenInRegulation = (CheckBox)view.findViewById(R.id.chkGreenInReg);
-        outOfBounds = (CheckBox)view.findViewById(R.id.chkOutOfBounds);
-        inRough = (CheckBox)view.findViewById(R.id.chkInRough);
-        inWater = (CheckBox)view.findViewById(R.id.chkInWater);
 
+        fairwayHit = (CheckBox) view.findViewById(R.id.chkFairwayHit);
+        fairwayBunkerHit = (CheckBox) view.findViewById(R.id.chkFairwayBunker);
+        greensideBunkerHit = (CheckBox) view.findViewById(R.id.chkGreensideBunker);
+        greenInRegulation = (CheckBox) view.findViewById(R.id.chkGreenInReg);
+        outOfBounds = (CheckBox) view.findViewById(R.id.chkOutOfBounds);
+        inRough = (CheckBox) view.findViewById(R.id.chkInRough);
+        inWater = (CheckBox) view.findViewById(R.id.chkInWater);
+
+        distanceToPin = (TextView) view.findViewById(R.id.distanceToPin);
+        numberOfPutts = (TextView) view.findViewById(R.id.putts);
+        lengthOfPutt = (TextView) view.findViewById(R.id.puttLength);
+        score = (TextView) view.findViewById(R.id.score);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MonLog.d(getActivity(), LOG, "PracticeUploadService starting ...");
+                sendSession();
+
+            }
+        });
         fairwayHit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -272,10 +246,6 @@ public class HoleStatFragment extends Fragment {
             }
         });
 
-        distanceToPin = (TextView) view.findViewById(R.id.distanceToPin);
-        numberOfPutts = (TextView) view.findViewById(R.id.putts);
-        lengthOfPutt = (TextView) view.findViewById(R.id.puttLength);
-        score = (TextView) view.findViewById(R.id.score);
 
         distanceLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -291,7 +261,7 @@ public class HoleStatFragment extends Fragment {
                         mListener.onHoleStatUpdated(practiceSession);
                     }
                 });
-                d.show(getFragmentManager(),"DTP");
+                d.show(getFragmentManager(), "DTP");
             }
         });
         numberPuttsLayout.setOnClickListener(new View.OnClickListener() {
@@ -308,7 +278,7 @@ public class HoleStatFragment extends Fragment {
                         mListener.onHoleStatUpdated(practiceSession);
                     }
                 });
-                d.show(getFragmentManager(),"NOP");
+                d.show(getFragmentManager(), "NOP");
             }
         });
         lengthPuttLayout.setOnClickListener(new View.OnClickListener() {
@@ -325,7 +295,7 @@ public class HoleStatFragment extends Fragment {
                         mListener.onHoleStatUpdated(practiceSession);
                     }
                 });
-                d.show(getFragmentManager(),"LOP");
+                d.show(getFragmentManager(), "LOP");
             }
         });
         scoreLayout.setOnClickListener(new View.OnClickListener() {
@@ -343,68 +313,57 @@ public class HoleStatFragment extends Fragment {
                         mListener.onHoleStatUpdated(practiceSession);
                     }
                 });
-                d.show(getFragmentManager(),"SCR");
+                d.show(getFragmentManager(), "SCR");
             }
         });
 
+
     }
 
-    private void clearFields() {
-        fairwayBunkerHit.setChecked(false);
-        outOfBounds.setChecked(false);
-        inRough.setChecked(false);
-        inWater.setChecked(false);
-        greenInRegulation.setChecked(false);
-        greensideBunkerHit.setChecked(false);
-        distanceToPin.setText("0");
-        numberOfPutts.setText("0");
-        lengthOfPutt.setText("0");
-        score.setText("0");
-    }
     private void setHoleStatFields() {
         HoleStatDTO currentHoleStat = getCurrentHoleStat();
         if (currentHoleStat == null) {
             currentHoleStat = new HoleStatDTO();
         }
-        Log.w(LOG,"*********** setHoleStatFields, " +
-                "holeNumber: " + currentHoleStat.getHoleNumber());
-        if (currentHoleStat.getFairwayBunkerHit() == Boolean.FALSE) {
+        Log.w(LOG, "*********** setHoleStatFields, " +
+                "holeNumber: " + currentHoleStat.getHole().getHoleNumber());
+        if (currentHoleStat.getFairwayBunkerHit() == false) {
             fairwayBunkerHit.setChecked(false);
         } else {
             fairwayBunkerHit.setChecked(true);
         }
 
-        if (currentHoleStat.getOutOfBounds() == Boolean.FALSE) {
+        if (currentHoleStat.getOutOfBounds() == false) {
             outOfBounds.setChecked(false);
         } else {
             outOfBounds.setChecked(true);
         }
 
-        if (currentHoleStat.getInRough() == Boolean.FALSE) {
+        if (currentHoleStat.getInRough() == false) {
             inRough.setChecked(false);
         } else {
             inRough.setChecked(true);
         }
-        if (currentHoleStat.getInWater() == Boolean.FALSE) {
+        if (currentHoleStat.getInWater() == false) {
             inWater.setChecked(false);
         } else {
             inWater.setChecked(true);
         }
 
-        if (currentHoleStat.getGreensideBunkerHit() == Boolean.FALSE) {
+        if (currentHoleStat.getGreensideBunkerHit() == false) {
             greensideBunkerHit.setChecked(false);
         } else {
             greensideBunkerHit.setChecked(true);
         }
 
-        if (currentHoleStat.getGreenInRegulation() == Boolean.FALSE) {
+        if (currentHoleStat.getGreenInRegulation() == false) {
             greenInRegulation.setChecked(false);
         } else {
             greenInRegulation.setChecked(true);
         }
 
 
-        if (currentHoleStat.getFairwayHit() == Boolean.FALSE) {
+        if (currentHoleStat.getFairwayHit() == false) {
             fairwayHit.setChecked(false);
         } else {
             fairwayHit.setChecked(true);
@@ -418,19 +377,19 @@ public class HoleStatFragment extends Fragment {
 
         if (currentHoleStat.getHole() != null) {
             HoleDTO h = currentHoleStat.getHole();
-            MonLog.e(getActivity(),LOG,"Hole: " + h.getHoleNumber() +
+            MonLog.e(getActivity(), LOG, "Hole: " + h.getHoleNumber() +
                     " Par: " + h.getPar() + " score: " + currentHoleStat.getScore());
             if (h.getPar().intValue() > currentHoleStat.getScore().intValue()) {
-                score.setTextColor(ContextCompat.getColor(getActivity(),R.color.red_500));
+                score.setTextColor(ContextCompat.getColor(getActivity(), R.color.red_500));
             }
             if (h.getPar().intValue() == currentHoleStat.getScore().intValue()) {
-                score.setTextColor(ContextCompat.getColor(getActivity(),R.color.black));
+                score.setTextColor(ContextCompat.getColor(getActivity(), R.color.black));
             }
             if (h.getPar().intValue() < currentHoleStat.getScore().intValue()) {
-                score.setTextColor(ContextCompat.getColor(getActivity(),R.color.blue_400));
+                score.setTextColor(ContextCompat.getColor(getActivity(), R.color.blue_400));
             }
         } else {
-            MonLog.e(getActivity(),LOG,"---------------------current HoleDTO is NULL");
+            MonLog.e(getActivity(), LOG, "---------------------current HoleDTO is NULL");
         }
 
         if (!currentHoleStat.getClubUsedList().isEmpty()) {
@@ -451,15 +410,15 @@ public class HoleStatFragment extends Fragment {
             clubToGreen.setText("Club Used");
         }
 
-     }
+    }
 
     private HoleStatDTO getCurrentHoleStat() {
-        for (HoleStatDTO hs: practiceSession.getHoleStatList()) {
-            if (hs.getHoleNumber().intValue() == currentHoleNumber) {
+        for (HoleStatDTO hs : practiceSession.getHoleStatList()) {
+            if (hs.getHole().getHoleNumber().intValue() == currentHoleNumber) {
                 return hs;
             }
         }
-        return null;
+        throw new RuntimeException("This hole should be found");
     }
 
     @Override
@@ -480,33 +439,117 @@ public class HoleStatFragment extends Fragment {
     }
 
     private void selectTeeClub() {
-        ClubsAndShapesDialog d = new ClubsAndShapesDialog();
-        d.setApp(app);
-        d.setListener(new ClubsAndShapesDialog.ClubsAndShapesListener() {
-            @Override
-            public void onSelected(ClubUsedDTO clubUsed) {
-                getCurrentHoleStat().getClubUsedList().add(clubUsed);
-                clubTeeShot.setText(clubUsed.getClub().getClubName()
-                        + ", " + clubUsed.getShotShape().getShape());
-                mListener.onHoleStatUpdated(practiceSession);
-            }
-        });
-        d.show(getFragmentManager(),"CSH");
+        mListener.onTeeClubSelectionRequired();
+    }
+
+    private void selectGreenClub() {
+        mListener.onGreenClubSelectionRequired();
+    }
+
+    public void setGreenClubAndShape(ClubDTO club, ShotShapeDTO shape) {
+        ClubUsedDTO clubUsed = new ClubUsedDTO();
+        clubUsed.setClub(club);
+        clubUsed.setShotShape(shape);
+        getCurrentHoleStat().getClubUsedList().add(clubUsed);
+        clubToGreen.setText(clubUsed.getClub().getClubName()
+                + ", " + clubUsed.getShotShape().getShape());
+        mListener.onHoleStatUpdated(practiceSession);
+    }
+
+    public void setTeeClubAndShape(ClubDTO club, ShotShapeDTO shape) {
+        ClubUsedDTO clubUsed = new ClubUsedDTO();
+        clubUsed.setClub(club);
+        clubUsed.setShotShape(shape);
+        getCurrentHoleStat().getClubUsedList().add(clubUsed);
+        clubTeeShot.setText(clubUsed.getClub().getClubName()
+                + ", " + clubUsed.getShotShape().getShape());
+        mListener.onHoleStatUpdated(practiceSession);
+    }
+
+    private void sendSession() {
+        aggregateSession();
+        RequestDTO w = new RequestDTO(RequestDTO.ADD_PRACTICE_SESSION);
+        w.setPracticeSession(practiceSession);
+        w.setZipResponse(false);
+
+        if (WebCheck.checkNetworkAvailability(getActivity()).isNetworkUnavailable()) {
+            return;
+        }
+        OKUtil util = new OKUtil();
+        try {
+            util.sendPOSTRequest(getActivity(), w, getActivity(), new OKUtil.OKListener() {
+                @Override
+                public void onResponse(final ResponseDTO response) {
+                    MonLog.w(getActivity(), LOG, "PracticeSession updated on SERVER");
+                }
+
+                @Override
+                public void onError(String message) {
+                    Util.showErrorToast(getActivity(), message);
+
+                }
+            });
+        } catch (OKHttpException e) {
+            e.printStackTrace();
+        }
 
     }
-    private void selectGreenClub() {
-        ClubsAndShapesDialog d = new ClubsAndShapesDialog();
-        d.setApp(app);
-        d.setListener(new ClubsAndShapesDialog.ClubsAndShapesListener() {
-            @Override
-            public void onSelected(ClubUsedDTO clubUsed) {
-                getCurrentHoleStat().getClubUsedList().add(clubUsed);
-                clubToGreen.setText(clubUsed.getClub().getClubName()
-                        + ", " + clubUsed.getShotShape().getShape());
-                mListener.onHoleStatUpdated(practiceSession);
+
+    private void aggregateSession() {
+
+
+        int numberOfHoles = 0;
+        for (HoleStatDTO hs : practiceSession.getHoleStatList()) {
+            if (hs.getScore().intValue() > 0) {
+                numberOfHoles++;
             }
-        });
-        d.show(getFragmentManager(),"CSH");
+        }
+        practiceSession.setNumberOfHoles(numberOfHoles);
+        practiceSession.setGolfCourseID(practiceSession.getGolfCourse().getGolfCourseID());
+//        practiceSession.setGolfCourse(null);
+        int totalStrokes = 0, totalPar = 0, totalMistakes = 0;
+        for (HoleStatDTO hs : practiceSession.getHoleStatList()) {
+            if (hs.getScore() == 0) {
+                continue;
+            }
+            totalStrokes += hs.getScore().intValue();
+            totalPar += hs.getHole().getPar();
+            int mistakes = 0;
+            if (hs.getFairwayBunkerHit() == true) {
+                mistakes++;
+            }
+            if (hs.getGreensideBunkerHit() == true) {
+                mistakes++;
+            }
+            if (hs.getInRough() == true) {
+                mistakes++;
+            }
+            if (hs.getInWater() == true) {
+                mistakes++;
+            }
+            if (hs.getOutOfBounds() == true) {
+                mistakes++;
+            }
+            if (hs.getNumberOfPutts() > 2) {
+                mistakes++;
+            }
+
+            hs.setMistakes(mistakes);
+            totalMistakes += mistakes;
+        }
+        practiceSession.setTotalStrokes(totalStrokes);
+        practiceSession.setTotalMistakes(totalMistakes);
+
+        if (totalPar == totalStrokes) {
+            practiceSession.setPar(Boolean.TRUE);
+        }
+        if (totalPar < totalStrokes) {
+            practiceSession.setOverPar(totalStrokes - totalPar);
+        }
+        if (totalPar > totalStrokes) {
+            practiceSession.setUnderPar(totalPar - totalStrokes);
+        }
+
 
     }
 
@@ -514,8 +557,8 @@ public class HoleStatFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            MonLog.e(getActivity(),LOG,"$$$$$$$$$$$$ PracticeBroadcastReceiver onReceive");
-            PracticeSessionDTO m = (PracticeSessionDTO)intent.getSerializableExtra("session");
+            MonLog.e(getActivity(), LOG, "$$$$$$$$$$$$ PracticeBroadcastReceiver onReceive");
+            PracticeSessionDTO m = (PracticeSessionDTO) intent.getSerializableExtra("session");
             practiceSession.setPracticeSessionID(m.getPracticeSessionID());
         }
     }
@@ -523,7 +566,12 @@ public class HoleStatFragment extends Fragment {
 
     public interface HoleStatListener {
         void onHoleStatUpdated(PracticeSessionDTO session);
+
+        void onTeeClubSelectionRequired();
+
+        void onGreenClubSelectionRequired();
     }
+
     public interface SwipeListener {
         void onForwardSwipe();
 

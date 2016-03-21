@@ -68,9 +68,14 @@ public class LoginActivity extends AppCompatActivity {
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-        checkSignedIn();
+
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkSignedIn();
+    }
     private void checkSignedIn() {
         if (SharedUtil.getPlayer(getApplicationContext()) != null) {
             startMain();

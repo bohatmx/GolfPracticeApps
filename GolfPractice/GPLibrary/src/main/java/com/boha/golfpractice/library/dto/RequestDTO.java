@@ -24,6 +24,7 @@ public class RequestDTO {
             ADD_HOLE = 12,
             ADD_PRACTICE_SESSION = 14,
             ADD_HOLE_STAT = 15,
+            CLOSE_PRACTICE_SESSION = 16,
 
     GET_PLAYER_DATA = 21,
             GET_COACH_DATA = 22,

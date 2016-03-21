@@ -12,10 +12,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.boha.golfpractice.library.R;
+import com.boha.golfpractice.library.activities.MonApp;
 import com.boha.golfpractice.library.adapters.SessionListAdapter;
 import com.boha.golfpractice.library.dto.PracticeSessionDTO;
+import com.boha.golfpractice.library.dto.RequestDTO;
 import com.boha.golfpractice.library.dto.ResponseDTO;
 import com.boha.golfpractice.library.util.MonLog;
+import com.boha.golfpractice.library.util.OKHttpException;
+import com.boha.golfpractice.library.util.OKUtil;
+import com.boha.golfpractice.library.util.SnappyPractice;
+import com.boha.golfpractice.library.util.Util;
 
 import java.util.List;
 
@@ -34,8 +40,9 @@ public class SessionListFragment extends Fragment implements PageFragment {
 
     List<PracticeSessionDTO> practiceSessionList;
     RecyclerView mRecyclerView;
-    TextView txtCount, txtMessage;
+    TextView txtCount;
     View view;
+    MonApp app;
     SessionListAdapter adapter;
     FloatingActionButton fab;
     static final String LOG = SessionListFragment.class.getSimpleName();
@@ -66,12 +73,6 @@ public class SessionListFragment extends Fragment implements PageFragment {
 
     private void setList() {
 
-        if (practiceSessionList.isEmpty()) {
-            txtMessage.setVisibility(View.VISIBLE);
-            return;
-        } else {
-            txtMessage.setVisibility(View.GONE);
-        }
         MonLog.d(getActivity(), LOG, "########## setList: " + practiceSessionList.size());
         txtCount.setText("" + practiceSessionList.size());
         adapter = new SessionListAdapter(practiceSessionList, getActivity(), new SessionListAdapter.SessionListener() {
@@ -81,6 +82,11 @@ public class SessionListFragment extends Fragment implements PageFragment {
                     mListener.onSessionClicked(session);
                 }
             }
+
+            @Override
+            public void onSessionCloseRequired(PracticeSessionDTO session) {
+                closeSession(session);
+            }
         });
         mRecyclerView.setAdapter(adapter);
 
@@ -88,7 +94,6 @@ public class SessionListFragment extends Fragment implements PageFragment {
 
     private void setFields() {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
-        txtMessage = (TextView) view.findViewById(R.id.message);
         txtCount = (TextView) view.findViewById(R.id.count);
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
@@ -118,6 +123,40 @@ public class SessionListFragment extends Fragment implements PageFragment {
         }
     }
 
+
+    private void closeSession(PracticeSessionDTO session) {
+        RequestDTO w = new RequestDTO(RequestDTO.CLOSE_PRACTICE_SESSION);
+        w.setPracticeSessionID(session.getPracticeSessionID());
+        w.setPlayerID(session.getPlayerID());
+        w.setZipResponse(true);
+
+        OKUtil util = new OKUtil();
+        try {
+            util.sendGETRequest(getContext(), w, getActivity(), new OKUtil.OKListener() {
+                @Override
+                public void onResponse(final ResponseDTO response) {
+                    SnappyPractice.addPracticeSessions(app, response.getPracticeSessionList(), new SnappyPractice.DBWriteListener() {
+                        @Override
+                        public void onDataWritten() {
+                            setPracticeSessionList(response.getPracticeSessionList());
+                        }
+
+                        @Override
+                        public void onError(String message) {
+                            Util.showErrorToast(getActivity(),message);
+                        }
+                    });
+                }
+
+                @Override
+                public void onError(String message) {
+
+                }
+            });
+        } catch (OKHttpException e) {
+            e.printStackTrace();
+        }
+    }
     SessionListListener mListener;
     String pageTitle = "Practice Sessions";
 
@@ -142,22 +181,13 @@ public class SessionListFragment extends Fragment implements PageFragment {
         super.onDetach();
         mListener = null;
     }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface SessionListListener {
         void onSessionClicked(PracticeSessionDTO session);
 
         void onNewSessionRequested();
     }
 
-
+    public void setApp(MonApp app) {
+        this.app = app;
+    }
 }
