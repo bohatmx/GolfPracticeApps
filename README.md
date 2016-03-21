@@ -1,2 +1,2 @@
-# GolfPracticeApps
-GolfPractice Android apps
+# TGolfAndroidApps
+TGolf Android apps
