@@ -110,7 +110,7 @@
             <TextView
                 android:id="@+id/underLabel"
                 style="@style/TextStyleSmall"
-                android:text="Number of Strokes Under Par"
+                android:text="Number of Holes Under Par"
                 android:layout_toRightOf="@id/underPar"
                 android:layout_marginLeft="@dimen/mon_margin"
                 android:layout_centerVertical="true"
@@ -132,7 +132,7 @@
             <TextView
                 android:id="@+id/parLabel"
                 style="@style/TextStyleSmall"
-                android:text="Even Par"
+                android:text="Number of Holes Par"
                 android:layout_toRightOf="@id/par"
                 android:layout_marginLeft="@dimen/mon_margin"
                 android:layout_centerVertical="true"
@@ -154,7 +154,7 @@
             <TextView
                 android:id="@+id/overparLabel"
                 style="@style/TextStyleSmall"
-                android:text="Over Par"
+                android:text="Number of Holes Over Par"
                 android:layout_toRightOf="@id/overpar"
                 android:layout_marginLeft="@dimen/mon_margin"
                 android:layout_centerVertical="true"

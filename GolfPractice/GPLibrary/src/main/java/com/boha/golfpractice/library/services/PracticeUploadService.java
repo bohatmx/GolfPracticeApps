@@ -71,53 +71,77 @@ public class PracticeUploadService extends IntentService {
         }
         session.setNumberOfHoles(numberOfHoles);
         session.setGolfCourseID(session.getGolfCourse().getGolfCourseID());
+
+        aggregateSession(session);
         session.setGolfCourse(null);
-        int totalStrokes = 0, totalPar = 0, totalMistakes = 0;
-        for (HoleStatDTO hs: session.getHoleStatList()) {
-            totalStrokes += hs.getScore().intValue();
-            totalPar += hs.getHole().getPar();
-            int mistakes = 0;
-            if (hs.getFairwayBunkerHit() == Boolean.TRUE) {
-                mistakes++;
-            }
-            if (hs.getGreensideBunkerHit() == Boolean.TRUE) {
-                mistakes++;
-            }
-            if (hs.getInRough() == Boolean.TRUE) {
-                mistakes++;
-            }
-            if (hs.getInWater() == Boolean.TRUE) {
-                mistakes++;
-            }
-            if (hs.getOutOfBounds() == Boolean.TRUE) {
-                mistakes++;
-            }
-
-            hs.setMistakes(mistakes);
-            totalMistakes += mistakes;
-        }
-        session.setTotalStrokes(totalStrokes);
-        session.setTotalMistakes(totalMistakes);
-
-        if (totalPar == totalStrokes) {
-            session.setPar(Boolean.TRUE);
-        }
-        if (totalPar < totalStrokes) {
-            session.setOverPar(totalStrokes - totalPar);
-        }
-        if (totalPar > totalStrokes) {
-            session.setUnderPar(totalPar - totalStrokes);
-        }
-
-
-
         RequestDTO req = new RequestDTO(RequestDTO.ADD_PRACTICE_SESSION);
         req.setPracticeSession(session);
         req.setZipResponse(false);
         new DTask().execute(req);
 
     }
+    private void aggregateSession(PracticeSessionDTO practiceSession) {
 
+        int numberOfHoles = 0;
+        for (HoleStatDTO hs : practiceSession.getHoleStatList()) {
+            if (hs.getScore().intValue() > 0) {
+                numberOfHoles++;
+            }
+        }
+        practiceSession.setNumberOfHoles(numberOfHoles);
+        practiceSession.setGolfCourseID(practiceSession.getGolfCourse().getGolfCourseID());
+        int totalStrokes = 0, totalPar = 0,
+                totalUnderPar = 0,
+                totalOverPar = 0,
+                totalMistakes = 0;
+        for (HoleStatDTO hs : practiceSession.getHoleStatList()) {
+            if (hs.getScore() == 0) {
+                continue;
+            }
+            totalStrokes += hs.getScore();
+            if (hs.getScore().intValue() == hs.getHole().getPar().intValue()) {
+                totalPar++;
+            }
+            if (hs.getScore() < hs.getHole().getPar()) {
+                totalUnderPar++;
+            }
+            if (hs.getScore() > hs.getHole().getPar()) {
+                totalOverPar++;
+            }
+
+            int mistakes = 0;
+            if (hs.getFairwayBunkerHit()) {
+                mistakes++;
+            }
+            if (hs.getGreensideBunkerHit()) {
+                mistakes++;
+            }
+            if (hs.getInRough()) {
+                mistakes++;
+            }
+            if (hs.getInWater()) {
+                mistakes++;
+            }
+            if (hs.getOutOfBounds()) {
+                mistakes++;
+            }
+            if (hs.getNumberOfPutts() > 2) {
+                mistakes++;
+            }
+
+            hs.setMistakes(mistakes);
+            totalMistakes += mistakes;
+        }
+        practiceSession.setTotalStrokes(totalStrokes);
+        practiceSession.setTotalMistakes(totalMistakes);
+
+
+        practiceSession.setUnderPar(totalUnderPar);
+        practiceSession.setOverPar(totalOverPar);
+        practiceSession.setPar(totalPar);
+
+
+    }
     private class DTask extends AsyncTask<RequestDTO,Void,ResponseDTO> {
 
         @Override

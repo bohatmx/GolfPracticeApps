@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/mon_margin">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/mon_margin"
+        android:layout_marginRight="@dimen/mon_margin"
+        android:layout_marginLeft="@dimen/mon_margin"
+        app:cardCornerRadius="@dimen/mon_divider"
+        app:cardElevation="@dimen/mon_padding">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/mon_wide"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_marginTop="@dimen/mon_margin">
+
+            <RelativeLayout
+                android:id="@+id/nameLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/number">
+
+                <TextView
+                    android:id="@+id/golfCourse"
+                    style="@style/Title3TextStyleBlack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Player Name Here" />
+
+                <SeekBar
+                    android:id="@+id/seekBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/golfCourse"
+                    android:layout_marginRight="@dimen/mon_margin"
+                    android:layout_marginTop="@dimen/mon_margin"
+                    android:elevation="@dimen/mon_margin"
+                    android:max="365"
+                    android:progress="90" />
+
+                <ImageView
+                    android:id="@+id/iconSearch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:tint="?attr/colorPrimaryDark"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/mon_margin"
+                    android:src="@android:drawable/ic_menu_search" />
+
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/dateLayout"
+                android:layout_below="@id/nameLayout"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/dateLabel"
+                    style="@style/TextStyleGrey"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="@dimen/mon_padding"
+                    android:text="Days:" />
+                <TextView
+                    android:id="@+id/date"
+                    style="@style/Title3TextStyleBlack"
+                    android:layout_toRightOf="@id/dateLabel"
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/mon_padding"
+                    android:layout_marginLeft="@dimen/mon_margin"
+                    android:text="90"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="0"
+                    android:layout_marginRight="@dimen/mon_margin"
+                    android:textColor="@color/black"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/detailLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/dateLayout"
+                android:layout_marginTop="@dimen/mon_margin"
+                android:layout_toRightOf="@id/number">
+
+                <RelativeLayout
+                    android:id="@+id/holeLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/holeCount"
+                        style="@style/GreenCircle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0" />
+
+                    <TextView
+                        android:id="@+id/holeCountLabel"
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/holeCount"
+                        android:text="Number of Holes" />
+
+                    <TextView
+                        android:id="@+id/holeAverage"
+                        style="@style/Title3TextStyleGreen"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/mon_margin"
+                        android:text="9.8" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/strokeLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/holeLayout"
+                    android:layout_marginTop="@dimen/mon_padding">
+
+                    <TextView
+                        android:id="@+id/strokes"
+                        style="@style/GreyCircle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0" />
+
+                    <TextView
+                        android:id="@+id/strokesLabel"
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/strokes"
+                        android:text="Number of Strokes" />
+
+                    <TextView
+                        android:id="@+id/strokeAverage"
+                        style="@style/Title3TextStyleGrey"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/mon_margin"
+                        android:text="9.8" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/underParLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/strokeLayout"
+                    android:layout_marginTop="@dimen/mon_padding">
+
+                    <TextView
+                        android:id="@+id/underPar"
+                        style="@style/RedCircle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0" />
+
+                    <TextView
+                        android:id="@+id/underLabel"
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/underPar"
+                        android:text="Number of Holes Under Par" />
+
+                    <TextView
+                        android:id="@+id/underParAverage"
+                        style="@style/Title3TextStyleGreen"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/mon_margin"
+                        android:text="9.8"
+                        android:textColor="@color/red_500" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/parLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/underParLayout"
+                    android:layout_marginTop="@dimen/mon_padding">
+
+                    <TextView
+                        android:id="@+id/par"
+                        style="@style/BlackCircle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="E" />
+
+                    <TextView
+                        android:id="@+id/parLabel"
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/par"
+                        android:text="Number of Holes Par" />
+
+                    <TextView
+                        android:id="@+id/parAverage"
+                        style="@style/Title3TextStyleGreen"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/mon_margin"
+                        android:text="9.8"
+                        android:textColor="@color/black" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/overparLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/parLayout"
+                    android:layout_marginTop="@dimen/mon_padding">
+
+                    <TextView
+                        android:id="@+id/overpar"
+                        style="@style/BlueCircle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="E" />
+
+                    <TextView
+                        android:id="@+id/overparLabel"
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/overpar"
+                        android:text="Number of Holes Over Par" />
+
+                    <TextView
+                        android:id="@+id/overParAverage"
+                        style="@style/Title3TextStyleGreen"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/mon_margin"
+                        android:text="9.8"
+                        android:textColor="@color/blue" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/mistakesLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/overparLayout"
+                    android:layout_marginTop="@dimen/mon_padding">
+
+                    <TextView
+                        android:id="@+id/mistakes"
+                        style="@style/OrangeCircle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="E" />
+
+                    <TextView
+                        android:id="@+id/mistakeLabel"
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/mistakes"
+                        android:text="Mistakes" />
+
+                    <TextView
+                        android:id="@+id/mistakeAverage"
+                        style="@style/Title3TextStyleGreen"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/mon_margin"
+                        android:text="9.8"
+                        android:textColor="@color/orange_500" />
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+</ScrollView>

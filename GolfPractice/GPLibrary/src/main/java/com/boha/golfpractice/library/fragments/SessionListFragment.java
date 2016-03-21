@@ -110,6 +110,7 @@ public class SessionListFragment extends Fragment implements PageFragment {
 
     public void setPracticeSessionList(List<PracticeSessionDTO> practiceSessionList) {
         this.practiceSessionList = practiceSessionList;
+        MonLog.d(getActivity(), LOG, "+++++++++++++ setPracticeSessionList ++++");
         if (mRecyclerView != null) {
             setList();
         }
@@ -190,4 +191,6 @@ public class SessionListFragment extends Fragment implements PageFragment {
     public void setApp(MonApp app) {
         this.app = app;
     }
+
+
 }

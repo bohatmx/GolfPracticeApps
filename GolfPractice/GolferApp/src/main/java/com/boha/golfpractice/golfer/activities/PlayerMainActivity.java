@@ -32,6 +32,7 @@ import com.boha.golfpractice.library.dto.RequestDTO;
 import com.boha.golfpractice.library.dto.ResponseDTO;
 import com.boha.golfpractice.library.fragments.PageFragment;
 import com.boha.golfpractice.library.fragments.SessionListFragment;
+import com.boha.golfpractice.library.fragments.SessionSummaryFragment;
 import com.boha.golfpractice.library.util.DepthPageTransformer;
 import com.boha.golfpractice.library.util.OKHttpException;
 import com.boha.golfpractice.library.util.OKUtil;
@@ -90,21 +91,28 @@ public class PlayerMainActivity extends AppCompatActivity implements SessionList
         }
         Util.setCustomActionBar(ctx, getSupportActionBar(), "TGolf", getString(R.string.record_prac),
                 ContextCompat.getDrawable(ctx, com.boha.golfpractice.library.R.drawable.golfball48));
-        snackbar = Snackbar.make(mPager,"Refreshing data from cloud server, hang on a second ...",Snackbar.LENGTH_INDEFINITE);
-        buildPages();
+        snackbar = Snackbar.make(mPager, "Refreshing data from cloud server, hang on a second ...", Snackbar.LENGTH_INDEFINITE);
+
         getCachedPractices();
     }
 
     static List<PageFragment> pageFragmentList;
     SessionListFragment sessionListFragment;
+    SessionSummaryFragment sessionSummaryFragment;
     List<PracticeSessionDTO> practiceSessionList;
 
     private void buildPages() {
         pageFragmentList = new ArrayList<>();
         sessionListFragment = SessionListFragment.newInstance(practiceSessionList);
-        sessionListFragment.setApp((MonApp)getApplication());
+        sessionListFragment.setApp((MonApp) getApplication());
+
+        sessionSummaryFragment = new SessionSummaryFragment();
+        sessionSummaryFragment.setApp((MonApp) getApplication());
+        sessionSummaryFragment.setPlayer(SharedUtil.getPlayer(ctx));
 
         pageFragmentList.add(sessionListFragment);
+        pageFragmentList.add(sessionSummaryFragment);
+
         adapter = new StaffPagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(adapter);
         mPager.setPageTransformer(true, new DepthPageTransformer());
@@ -134,6 +142,7 @@ public class PlayerMainActivity extends AppCompatActivity implements SessionList
 
     Menu mMenu;
     Snackbar snackbar;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(com.boha.golfpractice.library.R.menu.player_main, menu);
@@ -155,6 +164,7 @@ public class PlayerMainActivity extends AppCompatActivity implements SessionList
     }
 
     static final int PRACTICE_SESSION_START = 123;
+
     @Override
     public void onSessionClicked(PracticeSessionDTO session) {
         if (session.getClosed() == Boolean.FALSE) {
@@ -251,9 +261,11 @@ public class PlayerMainActivity extends AppCompatActivity implements SessionList
                 if (response.getPracticeSessionList().isEmpty()) {
                     getPracticeSessions();
                 } else {
-                    if (sessionListFragment != null)
-                        sessionListFragment.setPracticeSessionList(response.getPracticeSessionList());
+                    practiceSessionList = response.getPracticeSessionList();
+                    snackbar.dismiss();
+                    buildPages();
                 }
+                //getPracticeSessions();
             }
 
             @Override
@@ -264,6 +276,7 @@ public class PlayerMainActivity extends AppCompatActivity implements SessionList
     }
 
     private void getPracticeSessions() {
+
         RequestDTO w = new RequestDTO(RequestDTO.GET_PLAYER_DATA);
         w.setPlayerID(SharedUtil.getPlayer(getApplicationContext()).getPlayerID());
         w.setZipResponse(true);
@@ -273,18 +286,17 @@ public class PlayerMainActivity extends AppCompatActivity implements SessionList
                 @Override
                 public void onResponse(final ResponseDTO response) {
                     setRefreshActionButtonState(false);
+                    snackbar.dismiss();
+                    practiceSessionList = response.getPracticeSessionList();
                     if (response.getPracticeSessionList().isEmpty()) {
-                        //onNewSessionRequested();
                         return;
                     }
+                    buildPages();
                     SnappyPractice.addPracticeSessions((MonApp) getApplication(), response.getPracticeSessionList(), new SnappyPractice.DBWriteListener() {
                         @Override
                         public void onDataWritten() {
-                            if (sessionListFragment != null)
-                                sessionListFragment.setPracticeSessionList(
-                                        response.getPracticeSessionList());
-                            SnappyGeneral.addClubs((MonApp)getApplication(),response.getClubList(),null);
-                            SnappyGeneral.addShotShapes((MonApp)getApplication(),response.getShotShapeList(),null);
+                            SnappyGeneral.addClubs((MonApp) getApplication(), response.getClubList(), null);
+                            SnappyGeneral.addShotShapes((MonApp) getApplication(), response.getShotShapeList(), null);
                         }
 
                         @Override
@@ -304,6 +316,7 @@ public class PlayerMainActivity extends AppCompatActivity implements SessionList
             e.printStackTrace();
         }
     }
+
     public void setRefreshActionButtonState(final boolean refreshing) {
         if (mMenu != null) {
             final MenuItem refreshItem = mMenu.findItem(com.boha.golfpractice.library.R.id.action_refresh);

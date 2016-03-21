@@ -22,8 +22,8 @@ public class PracticeSessionDTO implements Serializable {
     private Integer numberOfHoles;
     private Integer totalStrokes;
     private Integer underPar;
-    private Integer overPar;
-    private Boolean par, closed;
+    private Integer overPar, par;
+    private Boolean closed;
     private List<HoleStatDTO> holeStatList;
     private List<VideoUploadDTO> videoUploadList;
     private Integer playerID;
@@ -151,14 +151,14 @@ public class PracticeSessionDTO implements Serializable {
         this.overPar = overPar;
     }
 
-    public Boolean getPar() {
+    public Integer getPar() {
         if (par == null) {
-            par = Boolean.FALSE;
+            par = 0;
         }
         return par;
     }
 
-    public void setPar(Boolean par) {
+    public void setPar(Integer par) {
         this.par = par;
     }
 

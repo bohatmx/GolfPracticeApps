@@ -31,14 +31,15 @@ public class RequestDTO {
             GET_GOLF_COURSES_BY_LOCATION = 23,
             GET_ALL_GOLF_COURSES = 24,
             UPDATE_PRACTICE_SESSION = 25,
-            GET_ALL_COACHES = 26;
+            GET_ALL_COACHES = 26,
+            GET_SESSIONS_IN_PERIOD = 27;
 
     private int requestType;
     private Integer playerID,
             coachID,
             golfCourseID,
             practiceSessionID,
-            clubUsedID,
+            clubUsedID, days,
             holeID, holeStatID, videoUploadID;
     private Double latitude, longitude;
     private Integer radius;
@@ -49,6 +50,17 @@ public class RequestDTO {
     private PracticeSessionDTO practiceSession;
     private HoleStatDTO holeStat;
     private HoleDTO hole;
+
+    public Integer getDays() {
+        if (days == null) {
+            days = 90;
+        }
+        return days;
+    }
+
+    public void setDays(Integer days) {
+        this.days = days;
+    }
 
     private boolean zipResponse;
 

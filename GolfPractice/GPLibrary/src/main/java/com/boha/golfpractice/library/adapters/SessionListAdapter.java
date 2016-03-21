@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.boha.golfpractice.library.R;
-import com.boha.golfpractice.library.dto.HoleStatDTO;
 import com.boha.golfpractice.library.dto.PracticeSessionDTO;
 import com.boha.golfpractice.library.util.Statics;
 
@@ -57,32 +56,13 @@ public class SessionListAdapter extends RecyclerView.Adapter<SessionListAdapter.
         holder.numHoles.setText("" + p.getNumberOfHoles());
         holder.numStrokes.setText("" + p.getTotalStrokes());
         holder.numUnder.setText("" + p.getUnderPar());
-        holder.par.setText("E");
+        holder.par.setText("" + p.getPar());
         holder.numOver.setText("" + p.getOverPar());
         holder.number.setText("" +(position + 1));
 
-        int mistakes = 0;
-        if (!p.getHoleStatList().isEmpty()) {
-            for (HoleStatDTO hs: p.getHoleStatList()) {
-                if (hs.getFairwayBunkerHit() == Boolean.TRUE) {
-                    mistakes++;
-                }
-                if (hs.getGreensideBunkerHit() == Boolean.TRUE) {
-                    mistakes++;
-                }
-                if (hs.getInRough() == Boolean.TRUE) {
-                    mistakes++;
-                }
-                if (hs.getInWater() == Boolean.TRUE) {
-                    mistakes++;
-                }
-                if (hs.getOutOfBounds() == Boolean.TRUE) {
-                    mistakes++;
-                }
-            }
-        }
-        holder.numMistakes.setText(""+mistakes);
-        if (p.getClosed() == Boolean.FALSE) {
+
+        holder.numMistakes.setText(""+p.getTotalMistakes());
+        if (p.getClosed() == false) {
             holder.btnClose.setEnabled(true);
             holder.btnClose.setText("Close Session");
             holder.btnClose.setAlpha(1.0f);

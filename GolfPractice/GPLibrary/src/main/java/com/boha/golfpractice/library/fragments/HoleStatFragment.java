@@ -507,30 +507,45 @@ public class HoleStatFragment extends Fragment {
         practiceSession.setNumberOfHoles(numberOfHoles);
         practiceSession.setGolfCourseID(practiceSession.getGolfCourse().getGolfCourseID());
 //        practiceSession.setGolfCourse(null);
-        int totalStrokes = 0, totalPar = 0, totalMistakes = 0;
+        int totalStrokes = 0, totalPar = 0,
+                totalUnderPar = 0,
+                totalOverPar = 0,
+                totalMistakes = 0;
         for (HoleStatDTO hs : practiceSession.getHoleStatList()) {
             if (hs.getScore() == 0) {
                 continue;
             }
-            totalStrokes += hs.getScore().intValue();
-            totalPar += hs.getHole().getPar();
+            totalStrokes += hs.getScore();
+            if (hs.getScore().intValue() == hs.getHole().getPar().intValue()) {
+                totalPar++;
+            }
+            if (hs.getScore() < hs.getHole().getPar()) {
+                totalUnderPar++;
+            }
+            if (hs.getScore() > hs.getHole().getPar()) {
+                totalOverPar++;
+            }
+
             int mistakes = 0;
-            if (hs.getFairwayBunkerHit() == true) {
+            if (hs.getFairwayBunkerHit()) {
                 mistakes++;
             }
-            if (hs.getGreensideBunkerHit() == true) {
+            if (hs.getGreensideBunkerHit()) {
                 mistakes++;
             }
-            if (hs.getInRough() == true) {
+            if (hs.getInRough()) {
                 mistakes++;
             }
-            if (hs.getInWater() == true) {
+            if (hs.getInWater()) {
                 mistakes++;
             }
-            if (hs.getOutOfBounds() == true) {
+            if (hs.getOutOfBounds()) {
                 mistakes++;
             }
             if (hs.getNumberOfPutts() > 2) {
+                mistakes++;
+            }
+            if (!hs.getGreenInRegulation()) {
                 mistakes++;
             }
 
@@ -540,15 +555,10 @@ public class HoleStatFragment extends Fragment {
         practiceSession.setTotalStrokes(totalStrokes);
         practiceSession.setTotalMistakes(totalMistakes);
 
-        if (totalPar == totalStrokes) {
-            practiceSession.setPar(Boolean.TRUE);
-        }
-        if (totalPar < totalStrokes) {
-            practiceSession.setOverPar(totalStrokes - totalPar);
-        }
-        if (totalPar > totalStrokes) {
-            practiceSession.setUnderPar(totalPar - totalStrokes);
-        }
+
+        practiceSession.setUnderPar(totalUnderPar);
+        practiceSession.setOverPar(totalOverPar);
+        practiceSession.setPar(totalPar);
 
 
     }
