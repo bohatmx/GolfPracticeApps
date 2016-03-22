@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author aubreymalabie
  */
-public class GolfCourseDTO implements Serializable {
+public class GolfCourseDTO implements Serializable, Comparable<GolfCourseDTO> {
 
     private static final long serialVersionUID = 1L;
     private Integer golfCourseID;
@@ -122,5 +122,9 @@ public class GolfCourseDTO implements Serializable {
     public String toString() {
         return "com.boha.golfpractice.data.GolfCourse[ golfCourseID=" + golfCourseID + " ]";
     }
-    
+
+    @Override
+    public int compareTo(GolfCourseDTO another) {
+        return this.getGolfCourseName().compareTo(another.golfCourseName);
+    }
 }

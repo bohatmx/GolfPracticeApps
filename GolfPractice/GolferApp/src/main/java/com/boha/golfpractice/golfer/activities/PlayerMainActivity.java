@@ -309,7 +309,8 @@ public class PlayerMainActivity extends AppCompatActivity implements SessionList
 
                 @Override
                 public void onError(String message) {
-
+                    setRefreshActionButtonState(false);
+                    Util.showErrorToast(ctx, message);
                 }
             });
         } catch (OKHttpException e) {

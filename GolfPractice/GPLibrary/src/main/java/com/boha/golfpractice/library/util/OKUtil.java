@@ -43,8 +43,8 @@ public class OKUtil {
     public static final String DEV_URL = "http://192.168.1.233:40405/gp/prac";
     public static final String PROD_URL = "http://bohamaker.com:3030/gp/prac";
 
-    public static final String DEV_URL_CACHED = "http://192.168.1.233:40405/mp/cachedRequests";
-    public static final String PROD_URL_CACHED = "http://bohamaker.com:3030/mp/cachedRequests";
+    public static final String DEV_URL_CACHED = "http://192.168.1.233:40405/gp/cachedRequests";
+    public static final String PROD_URL_CACHED = "http://bohamaker.com:3030/gp/cachedRequests";
 
     static final String FAILED_RESPONSE_NOT_SUCCESSFUL = "Request failed. Response not successful";
     static final String FAILED_DATA_EXTRACTION = "Request failed. Unable to extract data from response";
@@ -71,7 +71,7 @@ public class OKUtil {
         boolean isDebuggable = 0 != (ctx.getApplicationInfo().flags
                 &= ApplicationInfo.FLAG_DEBUGGABLE);
         if (isDebuggable) {
-            return DEV_URL;
+            return PROD_URL;
         } else {
             return PROD_URL;
         }
@@ -228,45 +228,46 @@ public class OKUtil {
                         }
                     });
 
-                }
-                final ResponseDTO serverResponse;
-                if (zipResponseRequested) {
-                    serverResponse = processZipResponse(response);
-
                 } else {
-                    serverResponse = processResponse(response);
-                }
-                response.body().close();
+                    final ResponseDTO serverResponse;
+                    if (zipResponseRequested) {
+                        serverResponse = processZipResponse(response);
 
-                long end = System.currentTimeMillis();
-                Log.e(LOG, "### Server responded, " + req.urlString() + "\nround trip elapsed: " + getElapsed(start, end)
-                        + ", server elapsed: " + serverResponse.getElapsedSeconds()
-                        + ", statusCode: " + serverResponse.getStatusCode()
-                        + "\nmessage: " + serverResponse.getMessage());
+                    } else {
+                        serverResponse = processResponse(response);
+                    }
+                    response.body().close();
 
-                if (activity != null) {
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (listener != null) {
-                                if (serverResponse.getStatusCode() == 0) {
-                                    listener.onResponse(serverResponse);
-                                } else {
-                                    listener.onError(serverResponse.getMessage());
+                    long end = System.currentTimeMillis();
+                    Log.e(LOG, "### Server responded, " + req.urlString() + "\nround trip elapsed: " + getElapsed(start, end)
+                            + ", server elapsed: " + serverResponse.getElapsedSeconds()
+                            + ", statusCode: " + serverResponse.getStatusCode()
+                            + "\nmessage: " + serverResponse.getMessage());
+
+                    if (activity != null) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (listener != null) {
+                                    if (serverResponse.getStatusCode() == 0) {
+                                        listener.onResponse(serverResponse);
+                                    } else {
+                                        listener.onError(serverResponse.getMessage());
+                                    }
                                 }
                             }
-                        }
-                    });
-                } else {
-                    if (listener != null) {
-                        if (serverResponse.getStatusCode() == 0) {
-                            listener.onResponse(serverResponse);
-                        } else {
-                            listener.onError(serverResponse.getMessage());
+                        });
+                    } else {
+                        if (listener != null) {
+                            if (serverResponse.getStatusCode() == 0) {
+                                listener.onResponse(serverResponse);
+                            } else {
+                                listener.onError(serverResponse.getMessage());
+                            }
                         }
                     }
-                }
 
+                }
             }
         };
 

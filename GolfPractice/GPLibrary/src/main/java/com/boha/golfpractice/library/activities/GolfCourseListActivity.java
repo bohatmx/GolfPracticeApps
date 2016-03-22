@@ -140,7 +140,7 @@ public class GolfCourseListActivity extends AppCompatActivity implements GoogleA
         RequestDTO w = new RequestDTO(RequestDTO.GET_GOLF_COURSES_BY_LOCATION);
         w.setLatitude(mCurrentLocation.getLatitude());
         w.setLongitude(mCurrentLocation.getLongitude());
-        w.setRadius(50);
+        w.setRadius(200);
         w.setZipResponse(true);
 
         OKUtil okUtil = new OKUtil();
@@ -162,7 +162,11 @@ public class GolfCourseListActivity extends AppCompatActivity implements GoogleA
 
                 @Override
                 public void onError(String message) {
-                    Util.showErrorToast(ctx, message);
+                    setRefreshActionButtonState(false);
+                    snackbar.dismiss();
+                    if (golfCourseList == null || golfCourseList.isEmpty()) {
+                        Util.showErrorToast(ctx, "No golf courses found. There may be a problem with the server");
+                    }
                 }
             });
         } catch (OKHttpException e) {
@@ -333,7 +337,8 @@ public class GolfCourseListActivity extends AppCompatActivity implements GoogleA
         w.setZipResponse(false);
 
         if (WebCheck.checkNetworkAvailability(getApplicationContext()).isNetworkUnavailable()) {
-            cacheSession(s);
+            cacheSession(practiceSession);
+            onBackPressed();
             return;
         }
         OKUtil util = new OKUtil();
@@ -343,13 +348,18 @@ public class GolfCourseListActivity extends AppCompatActivity implements GoogleA
                 @Override
                 public void onResponse(final ResponseDTO response) {
                     setRefreshActionButtonState(false);
-                    cacheSession(response.getPracticeSessionList().get(0));
+                    snackbar.dismiss();
+                    practiceSession = response.getPracticeSessionList().get(0);
+                    cacheSession(practiceSession);
+                    onBackPressed();
                 }
 
                 @Override
                 public void onError(String message) {
                     setRefreshActionButtonState(false);
-                    Util.showErrorToast(getApplicationContext(),message);
+                    snackbar.dismiss();
+                    cacheSession(practiceSession);
+                    onBackPressed();
 
                 }
             });

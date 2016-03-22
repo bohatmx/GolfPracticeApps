@@ -10,6 +10,7 @@ import com.snappydb.DB;
 import com.snappydb.SnappydbException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -149,6 +150,9 @@ public class SnappyGolfCourse {
 
         @Override
         protected void onPostExecute(List<GolfCourseDTO> list) {
+            if (list != null) {
+                Collections.sort(list);
+            }
             switch (type) {
                 case ADD_COURSES:
                     if (dbWriteListener != null) {
